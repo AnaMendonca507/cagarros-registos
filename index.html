@@ -40,52 +40,5 @@
 <p id="mensagem"></p>
 
 <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbwWeI_xt1gzI_zfI4go0uT08Q0Mi5ayzaTbTa1z2fTMTVUdvPJ_Tkd0DkT7SAeKvOlL/exec";
-
-document.addEventListener("DOMContentLoaded", () => {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(pos => {
-            document.getElementById("latitude").value = pos.coords.latitude;
-            document.getElementById("longitude").value = pos.coords.longitude;
-            document.getElementById("sendBtn").disabled = false;
-            document.getElementById("sendBtn").textContent = "Enviar / Submit";
-        }, err => {
-            alert("⚠️ Não foi possível obter a localização / Unable to get location");
-        });
-    } else {
-        alert("⚠️ O seu dispositivo não suporta GPS / Your device does not support GPS");
-    }
-});
-
-document.getElementById("cagarroForm").addEventListener("submit", e => {
-    e.preventDefault();
-    document.getElementById("sendBtn").disabled = true;
-    document.getElementById("sendBtn").textContent = "A enviar... / Sending...";
-
-    fetch(scriptURL, {
-        method: "POST",
-        body: JSON.stringify({
-            nome: document.getElementById("nome").value,
-            estado: document.getElementById("estado").value,
-            latitude: document.getElementById("latitude").value,
-            longitude: document.getElementById("longitude").value
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        document.getElementById("mensagem").textContent = "✅ Registo enviado! Código / Code: " + data.codigo;
-        document.getElementById("cagarroForm").reset();
-        document.getElementById("sendBtn").disabled = false;
-        document.getElementById("sendBtn").textContent = "Enviar / Submit";
-    })
-    .catch(err => {
-        document.getElementById("mensagem").textContent = "❌ Erro ao enviar. Tente novamente / Error sending. Try again.";
-        document.getElementById("sendBtn").disabled = false;
-        document.getElementById("sendBtn").textContent = "Enviar / Submit";
-    });
-});
-</script>
-
-</body>
-</html>
+const scriptURL = "https://script.google.com/macros/s/AKfyc
 
