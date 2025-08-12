@@ -1,0 +1,38 @@
+function doPost(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("Folha1");
+
+  var data = JSON.parse(e.postData.contents);
+
+  var nome = data.nome || "";
+  var estado = data.estado || "";
+  var latitude = data.latitude || "";
+  var longitude = data.longitude || "";
+
+  // Gerar código único CAxx
+  var codigo;
+  do {
+    var numero = Math.floor(Math.random() * 100);
+    codigo = "CA" + (numero < 10 ? "0" + numero : numero);
+  } while (codigoExiste(sheet, codigo));
+
+  // Data e hora atuais
+  var dataHora = new Date();
+
+  // Guardar na folha
+  sheet.appendRow([dataHora, nome, estado, latitude, longitude, codigo]);
+
+  return ContentService
+    .createTextOutput(JSON.stringify({ status: "success", codigo: codigo }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function codigoExiste(sheet, codigo) {
+  var dados = sheet.getRange(2, 6, sheet.getLastRow() - 1, 1).getValues(); // Coluna F (Código)
+  for (var i = 0; i < dados.length; i++) {
+    if (dados[i][0] == codigo) {
+      return true;
+    }
+  }
+  return false;
+}
