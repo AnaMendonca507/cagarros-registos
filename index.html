@@ -1,38 +1,91 @@
-function doPost(e) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName("Folha1");
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registo de Cagarros / Cory's Shearwater Rescue</title>
+<style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 420px; margin: auto; background-color: #f8f9fa; }
+    h2 { text-align: center; }
+    label { font-weight: bold; display: block; margin-top: 15px; }
+    select, input, button { width: 100%; padding: 10px; margin-top: 5px; font-size: 16px; }
+    button { background-color: #28a745; color: white; border: none; cursor: pointer; border-radius: 5px; }
+    button:disabled { background-color: #ccc; }
+    #mensagem { margin-top: 20px; text-align: center; font-weight: bold; }
+</style>
+</head>
+<body>
 
-  var data = JSON.parse(e.postData.contents);
+<h2>🐦 Registo de Cagarros<br>🐦 Cory's Shearwater Rescue</h2>
 
-  var nome = data.nome || "";
-  var estado = data.estado || "";
-  var latitude = data.latitude || "";
-  var longitude = data.longitude || "";
+<form id="cagarroForm">
+    <label>Nome / Name</label>
+    <input type="text" id="nome" name="nome" placeholder="Digite o seu nome / Enter your name" required>
 
-  // Gerar código único CAxx
-  var codigo;
-  do {
-    var numero = Math.floor(Math.random() * 100);
-    codigo = "CA" + (numero < 10 ? "0" + numero : numero);
-  } while (codigoExiste(sheet, codigo));
+    <label>Estado / Status</label>
+    <select id="estado" name="estado" required>
+        <option value="">-- Escolher / Choose --</option>
+        <option value="Vivo / Alive">Vivo / Alive</option>
+        <option value="Morto / Dead">Morto / Dead</option>
+        <option value="Ferido / Injured">Ferido / Injured</option>
+        <option value="Oleado / Oiled">Oleado / Oiled</option>
+    </select>
 
-  // Data e hora atuais
-  var dataHora = new Date();
+    <input type="hidden" id="latitude" name="latitude">
+    <input type="hidden" id="longitude" name="longitude">
 
-  // Guardar na folha
-  sheet.appendRow([dataHora, nome, estado, latitude, longitude, codigo]);
+    <button type="submit" id="sendBtn" disabled>📍 A obter localização... / Getting location...</button>
+</form>
 
-  return ContentService
-    .createTextOutput(JSON.stringify({ status: "success", codigo: codigo }))
-    .setMimeType(ContentService.MimeType.JSON);
-}
+<p id="mensagem"></p>
 
-function codigoExiste(sheet, codigo) {
-  var dados = sheet.getRange(2, 6, sheet.getLastRow() - 1, 1).getValues(); // Coluna F (Código)
-  for (var i = 0; i < dados.length; i++) {
-    if (dados[i][0] == codigo) {
-      return true;
+<script>
+const scriptURL = "https://script.google.com/macros/s/AKfycbwWeI_xt1gzI_zfI4go0uT08Q0Mi5ayzaTbTa1z2fTMTVUdvPJ_Tkd0DkT7SAeKvOlL/exec";
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+            document.getElementById("latitude").value = pos.coords.latitude;
+            document.getElementById("longitude").value = pos.coords.longitude;
+            document.getElementById("sendBtn").disabled = false;
+            document.getElementById("sendBtn").textContent = "Enviar / Submit";
+        }, err => {
+            alert("⚠️ Não foi possível obter a localização / Unable to get location");
+        });
+    } else {
+        alert("⚠️ O seu dispositivo não suporta GPS / Your device does not support GPS");
     }
-  }
-  return false;
-}
+});
+
+document.getElementById("cagarroForm").addEventListener("submit", e => {
+    e.preventDefault();
+    document.getElementById("sendBtn").disabled = true;
+    document.getElementById("sendBtn").textContent = "A enviar... / Sending...";
+
+    fetch(scriptURL, {
+        method: "POST",
+        body: JSON.stringify({
+            nome: document.getElementById("nome").value,
+            estado: document.getElementById("estado").value,
+            latitude: document.getElementById("latitude").value,
+            longitude: document.getElementById("longitude").value
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("mensagem").textContent = "✅ Registo enviado! Código / Code: " + data.codigo;
+        document.getElementById("cagarroForm").reset();
+        document.getElementById("sendBtn").disabled = false;
+        document.getElementById("sendBtn").textContent = "Enviar / Submit";
+    })
+    .catch(err => {
+        document.getElementById("mensagem").textContent = "❌ Erro ao enviar. Tente novamente / Error sending. Try again.";
+        document.getElementById("sendBtn").disabled = false;
+        document.getElementById("sendBtn").textContent = "Enviar / Submit";
+    });
+});
+</script>
+
+</body>
+</html>
+
