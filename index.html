@@ -15,10 +15,9 @@
     background: var(--spea-blue);
     color: #fff;
   }
-  header { text-align: center; margin-bottom: 16px; }
-  header img { max-width: 200px; height: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,.25)); }
-  h2 { text-align: center; margin: 0 0 6px; }
+  h2 { text-align: center; margin: 12px 0 6px; }
   p.subtitle { text-align:center; margin:0 0 16px; color:#dbe1ff; font-size:14px; }
+
   label { font-weight: 600; display: block; margin-top: 14px; }
   select, input, textarea, button {
     width: 100%; padding: 12px; margin-top: 6px; font-size: 16px;
@@ -27,16 +26,19 @@
   textarea { resize: vertical; min-height: 72px; }
   button { background-color: #28a745; color: #fff; border: none; cursor: pointer; font-weight: 700; border-radius: 8px; }
   button.secondary { background:#0d6efd; margin-top:10px; }
+  button.ghost { background:transparent; border:2px solid #fff; color:#fff; }
   button:disabled { background-color: #adb5bd; cursor:not-allowed; }
+
   #mensagem { margin-top: 18px; text-align: center; font-weight: bold; min-height: 24px; }
   .hint { font-size: 12px; color:#e0e0e0; margin-top:4px; }
-  .hidden { display:none; }
+  .hidden { display:none !important; }
+
   .statusbar { margin-bottom: 12px; padding:10px; border-radius:8px; font-weight:700; text-align:center; }
   .online  { background:#e6f4ea; color:#1e7e34; border:1px solid #c7efd3; }
   .offline { background:#fdecea; color:#a4252c; border:1px solid #f5c6cb; }
   .queue { font-size: 13px; text-align:center; color:#eee; margin-top:8px; }
 
-  /* Código em destaque */
+  /* Código em destaque (inicialmente escondido) */
   .code-wrap { display:flex; justify-content:center; margin-top:12px; }
   .code-box {
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -46,17 +48,17 @@
     box-shadow: 0 3px 10px rgba(0,0,0,.15);
     min-width: 72%;
   }
+  .code-actions { display:flex; justify-content:center; gap:10px; margin-top:8px; }
   .small-note { text-align:center; font-size:12px; color:#dbe1ff; margin-top:6px; }
+
+  /* Rodapé com logo */
+  footer { margin: 28px 0 6px; display:flex; justify-content:center; }
+  footer img { max-width: 160px; height:auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,.25)); opacity: 0.95; }
 </style>
 </head>
 <body>
 
-<header>
-  <img src="./spea-logo-white.png" alt="SPEA" width="150" />
-</header>
-
-
-<h2> Registo de Cagarros<br/> Cory's Shearwater Rescue</h2>
+<h2>🪿 Registo de Cagarros<br/>🪿 Cory's Shearwater Rescue</h2>
 <p class="subtitle">Formulário bilingue — Portuguese / English</p>
 
 <div id="netStatus" class="statusbar hidden"></div>
@@ -97,17 +99,30 @@
   <button type="submit" id="sendBtn" disabled>📍 A obter localização... / Getting location...</button>
 </form>
 
+<!-- Botão e info de pendentes (offline) -->
 <button id="flushBtn" class="secondary hidden">📤 Enviar Pendentes / Send Pending</button>
 <div id="queueInfo" class="queue"></div>
 
+<!-- Mensagem e código (só aparece após envio) -->
 <p id="mensagem"></p>
-<div id="codeWrap" class="code-wrap hidden" aria-live="polite">
-  <div id="bigCode" class="code-box" title="Toque para selecionar / Tap to select"></div>
+
+<div id="codeArea" class="hidden">
+  <div id="codeWrap" class="code-wrap">
+    <div id="bigCode" class="code-box" title="Toque para selecionar / Tap to select"></div>
+  </div>
+  <div class="code-actions">
+    <button id="copyBtn" class="ghost">📋 Copiar código / Copy code</button>
+  </div>
+  <div id="codeNote" class="small-note">Guarde este código. / Keep this code.</div>
 </div>
-<div id="codeNote" class="small-note hidden">Guarde este código. / Keep this code.</div>
+
+<!-- Rodapé com o logo: aparece sempre no fundo, depois do código -->
+<footer>
+  <img src="./spea-logo-white.png" alt="SPEA" />
+</footer>
 
 <script>
-  // Endpoint do Apps Script (já com o seu link)
+  // 👉 Substitua pelo seu URL do Apps Script (se mudar)
   const scriptURL = "https://script.google.com/macros/s/AKfycbxrEarXlqmPBNiBsZHNMaylIzdgvtwWow6tP209WqrQsL3qXAIMOG_lcGWBSDtXypfK/exec";
 
   // ===== Concelho "Outro / Other" =====
@@ -144,12 +159,11 @@
   });
   function enableSend(){ const b = document.getElementById("sendBtn"); b.disabled = false; b.textContent = "Enviar / Submit"; }
 
-  // ===== Estado da rede + fila (offline) =====
+  // ===== Offline queue =====
   const LS_KEY = "cagarros_pendentes_v1";
   const netBar = document.getElementById("netStatus");
   const flushBtn = document.getElementById("flushBtn");
   const queueInfo = document.getElementById("queueInfo");
-
   function getQueue(){ try { return JSON.parse(localStorage.getItem(LS_KEY) || "[]"); } catch(_){ return []; } }
   function setQueue(arr){ localStorage.setItem(LS_KEY, JSON.stringify(arr)); updateQueueUI(); }
   function addPending(payload){ const q = getQueue(); q.push({ payload, savedAt: new Date().toISOString() }); setQueue(q); }
@@ -167,23 +181,23 @@
   window.addEventListener("offline", setNetBar);
   setNetBar(); updateQueueUI();
 
-  // ===== UI do código em destaque =====
-  const codeWrap = document.getElementById("codeWrap");
+  // ===== Área do código =====
+  const codeArea = document.getElementById("codeArea");
   const bigCode  = document.getElementById("bigCode");
-  const codeNote = document.getElementById("codeNote");
+  const copyBtn  = document.getElementById("copyBtn");
 
   // ===== Submissão =====
   document.getElementById("cagarroForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-
-    if (concelhoEl.value === "Outro" && outroInp.value.trim() === "") {
-      outroInp.focus(); outroInp.reportValidity?.(); return;
-    }
+    if (concelhoEl.value === "Outro" && outroInp.value.trim() === "") { outroInp.focus(); outroInp.reportValidity?.(); return; }
 
     const btn = document.getElementById("sendBtn");
     const msg = document.getElementById("mensagem");
     btn.disabled = true; btn.textContent = "A enviar... / Sending...";
-    codeWrap.classList.add("hidden"); codeNote.classList.add("hidden"); bigCode.textContent = "";
+
+    // Esconder a área do código até termos um novo
+    codeArea.classList.add("hidden");
+    bigCode.textContent = "";
 
     const payload = {
       nome: document.getElementById("nome").value,
@@ -203,8 +217,7 @@
       if (res.ok && data && data.status === "success") {
         msg.textContent = "✅ Registo enviado! / Entry submitted!";
         bigCode.textContent = data.codigo || "";
-        codeWrap.classList.remove("hidden");
-        codeNote.classList.remove("hidden");
+        codeArea.classList.remove("hidden"); // só mostra agora
         e.target.reset();
         outroDiv.classList.add("hidden"); outroInp.required = false;
       } else {
@@ -239,8 +252,25 @@
   }
   document.getElementById("flushBtn").addEventListener("click", flushPending);
 
-  // Toque para selecionar o código facilmente
-  bigCode?.addEventListener("click", () => {
+  // ===== Copiar código para clipboard =====
+  copyBtn.addEventListener("click", async (ev) => {
+    ev.preventDefault();
+    const code = bigCode.textContent.trim();
+    if (!code) return;
+    try {
+      await navigator.clipboard.writeText(code);
+      const old = copyBtn.textContent;
+      copyBtn.textContent = "✅ Copiado!";
+      setTimeout(() => copyBtn.textContent = old, 1400);
+    } catch(_) {
+      // fallback: selecionar texto
+      const r = document.createRange(); r.selectNodeContents(bigCode);
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    }
+  });
+
+  // Toque no código seleciona o texto
+  bigCode.addEventListener("click", () => {
     const r = document.createRange(); r.selectNodeContents(bigCode);
     const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
   });
