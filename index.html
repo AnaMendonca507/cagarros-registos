@@ -32,6 +32,15 @@
     <option value="Oleado / Oiled">Oleado / Oiled</option>
   </select>
 
+   <label for="concelho">Concelho / Municipality</label>
+  <select id="concelho" name="concelho" required>
+    <option value="">-- Selecione --</option>
+    <option value="Vila Franca do Campo">Vila Franca do Campo</option>
+    <option value="Nordeste">Nordeste</option>
+    <option value="Povoação">Povoação</option>
+    <option value="Faial da Terra">Faial da Terra</option>
+  </select>
+
   <label>Observações / Observations</label>
   <textarea id="observacoes" name="observacoes" placeholder="Informações adicionais / Additional information" rows="3"></textarea>
 
@@ -45,7 +54,7 @@
 
 <script>
 // Substitua abaixo pelo SEU link de Apps Script
-const scriptURL = "https://script.google.com/macros/s/AKfycbz2IFcHDO3v24YiBm9n6g-qzbNGgxnFvIxxHCaINgyFZqhcu7TCnrJ_wvqslj23nHIg/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbyL0rCqbwFCJqGfbPOzQwowEPjNRjJX5JexDEr16Zjd630O_lj7TH-fiyh_ikGWyZs/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
   if (navigator.geolocation) {
