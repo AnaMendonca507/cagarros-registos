@@ -32,14 +32,20 @@
     <option value="Oleado / Oiled">Oleado / Oiled</option>
   </select>
 
-   <label for="concelho">Concelho / Municipality</label>
-  <select id="concelho" name="concelho" required>
-    <option value="">-- Selecione --</option>
-    <option value="Vila Franca do Campo">Vila Franca do Campo</option>
-    <option value="Nordeste">Nordeste</option>
-    <option value="Povoação">Povoação</option>
-    <option value="Faial da Terra">Faial da Terra</option>
-  </select>
+  <label for="concelho">Concelho</label>
+<select id="concelho" name="concelho" required>
+  <option value="">-- Selecione --</option>
+  <option value="Vila Franca do Campo">Vila Franca do Campo</option>
+  <option value="Nordeste">Nordeste</option>
+  <option value="Povoação">Povoação</option>
+  <option value="Faial da Terra">Faial da Terra</option>
+  <option value="Outro">Outro</option>
+</select>
+
+<!-- Campo oculto que só aparece se "Outro" for escolhido -->
+<div id="outroConcelhoDiv" style="display:none; margin-top:5px;">
+  <input type="text" id="outroConcelho" placeholder="Especifique o concelho" />
+</div>
 
   <label>Observações / Observations</label>
   <textarea id="observacoes" name="observacoes" placeholder="Informações adicionais / Additional information" rows="3"></textarea>
