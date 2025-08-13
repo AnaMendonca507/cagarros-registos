@@ -8,7 +8,8 @@
   body { font-family: Arial, sans-serif; padding: 20px; max-width: 420px; margin: auto; background-color: #f8f9fa; }
   h2 { text-align: center; }
   label { font-weight: bold; display: block; margin-top: 15px; }
-  select, input, button { width: 100%; padding: 10px; margin-top: 5px; font-size: 16px; }
+  select, input, textarea, button { width: 100%; padding: 10px; margin-top: 5px; font-size: 16px; }
+  textarea { resize: vertical; }
   button { background-color: #28a745; color: white; border: none; cursor: pointer; border-radius: 5px; }
   button:disabled { background-color: #ccc; }
   #mensagem { margin-top: 20px; text-align: center; font-weight: bold; }
@@ -31,6 +32,9 @@
     <option value="Oleado / Oiled">Oleado / Oiled</option>
   </select>
 
+  <label>Observações / Observations</label>
+  <textarea id="observacoes" name="observacoes" placeholder="Informações adicionais / Additional information" rows="3"></textarea>
+
   <input type="hidden" id="latitude" name="latitude">
   <input type="hidden" id="longitude" name="longitude">
 
@@ -40,7 +44,8 @@
 <p id="mensagem"></p>
 
 <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbxqXk3VwIbCdMaaAfemdvtddd_4T31z1aJsqAsq_HdohKXhx_GYaLn5rwpb1Us38aLf/exec";
+// Substitua abaixo pelo SEU link de Apps Script
+const scriptURL = "https://script.google.com/macros/s/AKfycbypM7jzuUp2bhWb59gEs0UvLTvcRXoY2Otp_sMlEbyGejGljqaNpbr51Pw9OYfB88d2/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
   if (navigator.geolocation) {
@@ -67,30 +72,37 @@ document.getElementById("cagarroForm").addEventListener("submit", async (e) => {
   try {
     const res = await fetch(scriptURL, {
       method: "POST",
-      // Sem headers para evitar preflight; Apps Script lê o corpo como texto
       body: JSON.stringify({
         nome: document.getElementById("nome").value,
         estado: document.getElementById("estado").value,
+        observacoes: document.getElementById("observacoes").value,
         latitude: document.getElementById("latitude").value,
         longitude: document.getElementById("longitude").value
       })
     });
 
-    const data = await res.json().catch(() => null);
+    const text = await res.text();
+    let data = null;
+    try { data = JSON.parse(text); } catch(_) {}
+
     if (res.ok && data && data.status === "success") {
       msg.textContent = "✅ Registo enviado! Código / Code: " + data.codigo;
       document.getElementById("cagarroForm").reset();
     } else {
-      msg.textContent = "❌ Erro ao enviar. Tente novamente / Error sending. Try again.";
+      msg.innerHTML = "❌ Erro ao enviar.<br>" + (data ? (`${data.code || ''} ${data.message || ''}`) : text || "Tente novamente / Try again.");
     }
   } catch (err) {
-    msg.textContent = "❌ Erro ao enviar. Tente novamente / Error sending. Try again.";
+    msg.textContent = "❌ Erro de rede. Verifique ligação / Network error.";
   } finally {
     btn.disabled = false;
     btn.textContent = "Enviar / Submit";
   }
 });
 </script>
+
+</body>
+</html>
+
 
 </body>
 </html>
