@@ -67,6 +67,7 @@ document.getElementById("cagarroForm").addEventListener("submit", async (e) => {
   try {
     const res = await fetch(scriptURL, {
       method: "POST",
+      // Sem headers para evitar preflight; Apps Script lê o corpo como texto
       body: JSON.stringify({
         nome: document.getElementById("nome").value,
         estado: document.getElementById("estado").value,
@@ -93,3 +94,4 @@ document.getElementById("cagarroForm").addEventListener("submit", async (e) => {
 
 </body>
 </html>
+
