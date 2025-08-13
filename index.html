@@ -2,33 +2,59 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#2f4595" />
 <title>Registo de Cagarros / Cory's Shearwater Rescue</title>
 <style>
-  :root { --maxw: 520px; }
-  body { font-family: Arial, sans-serif; padding: 20px; margin: 0 auto; max-width: var(--maxw); background:#f8f9fa; }
-  h2 { text-align: center; margin: 0 0 12px; }
-  p.subtitle { text-align:center; margin:0 0 16px; color:#555; font-size:14px; }
+  :root { --maxw: 520px; --spea-blue: #2f4595; }
+  body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    margin: 0 auto;
+    max-width: var(--maxw);
+    background: var(--spea-blue);
+    color: #fff;
+  }
+  header { text-align: center; margin-bottom: 16px; }
+  header img { max-width: 200px; height: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,.25)); }
+  h2 { text-align: center; margin: 0 0 6px; }
+  p.subtitle { text-align:center; margin:0 0 16px; color:#dbe1ff; font-size:14px; }
   label { font-weight: 600; display: block; margin-top: 14px; }
   select, input, textarea, button {
-    width: 100%; padding: 12px; margin-top: 6px; font-size: 16px; border:1px solid #ced4da; border-radius: 6px; background:#fff;
+    width: 100%; padding: 12px; margin-top: 6px; font-size: 16px;
+    border:1px solid #ced4da; border-radius: 8px; background:#fff; color:#000;
   }
   textarea { resize: vertical; min-height: 72px; }
-  button { background-color: #28a745; color: #fff; border: none; cursor: pointer; font-weight: 600; }
+  button { background-color: #28a745; color: #fff; border: none; cursor: pointer; font-weight: 700; border-radius: 8px; }
   button.secondary { background:#0d6efd; margin-top:10px; }
   button:disabled { background-color: #adb5bd; cursor:not-allowed; }
   #mensagem { margin-top: 18px; text-align: center; font-weight: bold; min-height: 24px; }
-  .hint { font-size: 12px; color:#666; margin-top:4px; }
+  .hint { font-size: 12px; color:#e0e0e0; margin-top:4px; }
   .hidden { display:none; }
-  .statusbar {
-    margin-bottom: 12px; padding:10px; border-radius:6px; font-weight:600; text-align:center;
-  }
+  .statusbar { margin-bottom: 12px; padding:10px; border-radius:8px; font-weight:700; text-align:center; }
   .online  { background:#e6f4ea; color:#1e7e34; border:1px solid #c7efd3; }
   .offline { background:#fdecea; color:#a4252c; border:1px solid #f5c6cb; }
-  .queue { font-size: 13px; text-align:center; color:#333; margin-top:8px; }
+  .queue { font-size: 13px; text-align:center; color:#eee; margin-top:8px; }
+
+  /* Código em destaque */
+  .code-wrap { display:flex; justify-content:center; margin-top:12px; }
+  .code-box {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 2.2rem; line-height: 1.2;
+    background:#fff; border:3px dashed #28a745; color:#0b7a2a;
+    padding: 14px 18px; border-radius: 12px; user-select: all; text-align:center;
+    box-shadow: 0 3px 10px rgba(0,0,0,.15);
+    min-width: 72%;
+  }
+  .small-note { text-align:center; font-size:12px; color:#dbe1ff; margin-top:6px; }
 </style>
 </head>
 <body>
+
+<header>
+  <!-- Logo SPEA embutido (base64) -->
+  <img alt="SPEA" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqAAAAHACAYAAAB9m3rJAAAB... (encurtado) ..." />
+</header>
 
 <h2>🪿 Registo de Cagarros<br/>🪿 Cory's Shearwater Rescue</h2>
 <p class="subtitle">Formulário bilingue — Portuguese / English</p>
@@ -75,12 +101,16 @@
 <div id="queueInfo" class="queue"></div>
 
 <p id="mensagem"></p>
+<div id="codeWrap" class="code-wrap hidden" aria-live="polite">
+  <div id="bigCode" class="code-box" title="Toque para selecionar / Tap to select"></div>
+</div>
+<div id="codeNote" class="small-note hidden">Guarde este código. / Keep this code.</div>
 
 <script>
-  // 👉 Substitua pelo URL do seu Web App (Apps Script publicado)
+  // Endpoint do Apps Script (já com o seu link)
   const scriptURL = "https://script.google.com/macros/s/AKfycbxrEarXlqmPBNiBsZHNMaylIzdgvtwWow6tP209WqrQsL3qXAIMOG_lcGWBSDtXypfK/exec";
 
-  // ===== UI: Concelho "Outro / Other" =====
+  // ===== Concelho "Outro / Other" =====
   const concelhoEl = document.getElementById("concelho");
   const outroDiv   = document.getElementById("outroConcelhoDiv");
   const outroInp   = document.getElementById("outroConcelho");
@@ -112,10 +142,7 @@
       enableSend();
     }
   });
-  function enableSend(){
-    const b = document.getElementById("sendBtn");
-    b.disabled = false; b.textContent = "Enviar / Submit";
-  }
+  function enableSend(){ const b = document.getElementById("sendBtn"); b.disabled = false; b.textContent = "Enviar / Submit"; }
 
   // ===== Estado da rede + fila (offline) =====
   const LS_KEY = "cagarros_pendentes_v1";
@@ -125,34 +152,30 @@
 
   function getQueue(){ try { return JSON.parse(localStorage.getItem(LS_KEY) || "[]"); } catch(_){ return []; } }
   function setQueue(arr){ localStorage.setItem(LS_KEY, JSON.stringify(arr)); updateQueueUI(); }
-  function addPending(payload){
-    const q = getQueue();
-    q.push({ payload, savedAt: new Date().toISOString() });
-    setQueue(q);
-  }
+  function addPending(payload){ const q = getQueue(); q.push({ payload, savedAt: new Date().toISOString() }); setQueue(q); }
   function updateQueueUI(){
     const qlen = getQueue().length;
     queueInfo.textContent = qlen > 0 ? `🗂️ Pendentes: ${qlen}` : "";
     flushBtn.classList.toggle("hidden", qlen === 0);
   }
-
   function setNetBar(){
     netBar.classList.remove("hidden");
-    if (navigator.onLine) {
-      netBar.className = "statusbar online";
-      netBar.textContent = "Ligação ativa / Online";
-    } else {
-      netBar.className = "statusbar offline";
-      netBar.textContent = "Sem rede — os envios ficam pendentes / Offline — submissions will be queued";
-    }
+    if (navigator.onLine) { netBar.className = "statusbar online";  netBar.textContent = "Ligação ativa / Online"; }
+    else                  { netBar.className = "statusbar offline"; netBar.textContent = "Sem rede — pendentes / Offline — will be queued"; }
   }
   window.addEventListener("online", () => { setNetBar(); flushPending(); });
   window.addEventListener("offline", setNetBar);
   setNetBar(); updateQueueUI();
 
-  // ===== Submissão do formulário =====
+  // ===== UI do código em destaque =====
+  const codeWrap = document.getElementById("codeWrap");
+  const bigCode  = document.getElementById("bigCode");
+  const codeNote = document.getElementById("codeNote");
+
+  // ===== Submissão =====
   document.getElementById("cagarroForm").addEventListener("submit", async (e) => {
     e.preventDefault();
+
     if (concelhoEl.value === "Outro" && outroInp.value.trim() === "") {
       outroInp.focus(); outroInp.reportValidity?.(); return;
     }
@@ -160,6 +183,7 @@
     const btn = document.getElementById("sendBtn");
     const msg = document.getElementById("mensagem");
     btn.disabled = true; btn.textContent = "A enviar... / Sending...";
+    codeWrap.classList.add("hidden"); codeNote.classList.add("hidden"); bigCode.textContent = "";
 
     const payload = {
       nome: document.getElementById("nome").value,
@@ -175,20 +199,21 @@
       const res = await fetch(scriptURL, { method: "POST", body: JSON.stringify(payload) });
       const text = await res.text();
       let data = null; try { data = JSON.parse(text); } catch(_) {}
+
       if (res.ok && data && data.status === "success") {
-        msg.textContent = `✅ Registo enviado! Código: ${data.codigo} | % Lua: ${data.moon_pct}% | Fase: ${data.moon_phase}`;
+        msg.textContent = "✅ Registo enviado! / Entry submitted!";
+        bigCode.textContent = data.codigo || "";
+        codeWrap.classList.remove("hidden");
+        codeNote.classList.remove("hidden");
         e.target.reset();
         outroDiv.classList.add("hidden"); outroInp.required = false;
       } else {
-        // Falhou no servidor mas com rede: guardar pendente para não perder
         addPending(payload);
-        msg.innerHTML = "⚠️ Não foi possível gravar agora. Guardado em Pendentes.<br/>" +
-                        (data ? (`${data.code || ''} ${data.message || ''}`) : text || "");
+        msg.innerHTML = "⚠️ Não foi possível gravar agora. Guardado em Pendentes.";
       }
     } catch (err) {
-      // Sem rede / erro de rede → guardar pendente
       addPending(payload);
-      document.getElementById("mensagem").textContent = "📦 Sem rede: registo guardado em Pendentes / Saved offline.";
+      msg.textContent = "📦 Sem rede: guardado em Pendentes / Saved offline.";
     } finally {
       btn.disabled = false; btn.textContent = "Enviar / Submit";
     }
@@ -197,35 +222,28 @@
   // ===== Enviar Pendentes =====
   async function flushPending(){
     if (!navigator.onLine) return;
-    const q = getQueue();
-    if (q.length === 0) return;
-
+    const q = getQueue(); if (q.length === 0) return;
     flushBtn.disabled = true; flushBtn.textContent = "A enviar pendentes... / Sending...";
-    let ok = 0, fail = 0;
-    const newQ = [];
-
+    let ok = 0, fail = 0; const newQ = [];
     for (const item of q) {
       try {
         const res = await fetch(scriptURL, { method: "POST", body: JSON.stringify(item.payload) });
-        if (res.ok) {
-          ok++;
-        } else {
-          fail++;
-          newQ.push(item); // mantém na fila
-        }
-      } catch(_) {
-        fail++; newQ.push(item);
-      }
+        if (res.ok) ok++; else { fail++; newQ.push(item); }
+      } catch(_) { fail++; newQ.push(item); }
     }
-
     setQueue(newQ);
     flushBtn.disabled = false; flushBtn.textContent = "📤 Enviar Pendentes / Send Pending";
     const msg = document.getElementById("mensagem");
     if (ok>0) msg.textContent = `📤 Enviados: ${ok} | Por enviar: ${newQ.length}`;
-    if (fail>0 && ok===0) msg.textContent = "⚠️ Não foi possível enviar os pendentes. Tente mais tarde.";
+    if (fail>0 && ok===0) msg.textContent = "⚠️ Falha ao enviar pendentes.";
   }
+  document.getElementById("flushBtn").addEventListener("click", flushPending);
 
-  flushBtn.addEventListener("click", flushPending);
+  // Toque para selecionar o código facilmente
+  bigCode?.addEventListener("click", () => {
+    const r = document.createRange(); r.selectNodeContents(bigCode);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+  });
 </script>
 
 </body>
