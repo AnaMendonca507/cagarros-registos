@@ -1,29 +1,38 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Registo de Cagarros / Cory's Shearwater Rescue</title>
 <style>
-  body { font-family: Arial, sans-serif; padding: 20px; max-width: 420px; margin: auto; background-color: #f8f9fa; }
-  h2 { text-align: center; }
-  label { font-weight: bold; display: block; margin-top: 15px; }
-  select, input, textarea, button { width: 100%; padding: 10px; margin-top: 5px; font-size: 16px; }
-  textarea { resize: vertical; }
-  button { background-color: #28a745; color: white; border: none; cursor: pointer; border-radius: 5px; }
-  button:disabled { background-color: #ccc; }
-  #mensagem { margin-top: 20px; text-align: center; font-weight: bold; }
+  :root { --maxw: 480px; }
+  body { font-family: Arial, sans-serif; padding: 20px; margin: 0 auto; max-width: var(--maxw); background:#f8f9fa; }
+  h2 { text-align: center; margin: 0 0 12px; }
+  p.subtitle { text-align:center; margin:0 0 20px; color:#555; font-size:14px; }
+  label { font-weight: 600; display: block; margin-top: 14px; }
+  select, input, textarea, button {
+    width: 100%; padding: 12px; margin-top: 6px; font-size: 16px; border:1px solid #ced4da; border-radius: 6px; background:#fff;
+  }
+  textarea { resize: vertical; min-height: 72px; }
+  button { background-color: #28a745; color: #fff; border: none; cursor: pointer; font-weight: 600; }
+  button:disabled { background-color: #adb5bd; cursor:not-allowed; }
+  #mensagem { margin-top: 18px; text-align: center; font-weight: bold; min-height: 24px; }
+  .hint { font-size: 12px; color:#666; margin-top:4px; }
+  .row { display:flex; gap:10px; }
+  .row > div { flex:1; }
+  .hidden { display:none; }
 </style>
 </head>
 <body>
 
-<h2>🪿 Registo de Cagarros<br>🪿 Cory's Shearwater Rescue</h2>
+<h2>🪿 Registo de Cagarros<br/>🪿 Cory's Shearwater Rescue</h2>
+<p class="subtitle">Formulario bilingue — Portuguese / English</p>
 
-<form id="cagarroForm">
-  <label>Nome / Name</label>
-  <input type="text" id="nome" name="nome" placeholder="Digite o seu nome / Enter your name" required>
+<form id="cagarroForm" novalidate>
+  <label for="nome">Nome / Name</label>
+  <input type="text" id="nome" name="nome" placeholder="Digite o seu nome / Enter your name" required />
 
-  <label>Estado / Status</label>
+  <label for="estado">Estado / Status</label>
   <select id="estado" name="estado" required>
     <option value="">-- Escolher / Choose --</option>
     <option value="Vivo / Alive">Vivo / Alive</option>
@@ -32,26 +41,25 @@
     <option value="Oleado / Oiled">Oleado / Oiled</option>
   </select>
 
-  <label for="concelho">Concelho</label>
-<select id="concelho" name="concelho" required>
-  <option value="">-- Selecione --</option>
-  <option value="Vila Franca do Campo">Vila Franca do Campo</option>
-  <option value="Nordeste">Nordeste</option>
-  <option value="Povoação">Povoação</option>
-  <option value="Faial da Terra">Faial da Terra</option>
-  <option value="Outro">Outro</option>
-</select>
+  <label for="concelho">Concelho / Municipality</label>
+  <select id="concelho" name="concelho" required>
+    <option value="">-- Selecionar / Select --</option>
+    <option value="Vila Franca do Campo">Vila Franca do Campo</option>
+    <option value="Nordeste">Nordeste</option>
+    <option value="Povoação">Povoação</option>
+    <option value="Faial da Terra">Faial da Terra</option>
+    <option value="Outro">Outro / Other</option>
+  </select>
+  <div id="outroConcelhoDiv" class="hidden">
+    <input type="text" id="outroConcelho" placeholder="Especifique o concelho / Specify municipality" />
+    <div class="hint">Se escolher “Outro / Other”, escreva o nome do concelho acima.</div>
+  </div>
 
-<!-- Campo oculto que só aparece se "Outro" for escolhido -->
-<div id="outroConcelhoDiv" style="display:none; margin-top:5px;">
-  <input type="text" id="outroConcelho" placeholder="Especifique o concelho" />
-</div>
+  <label for="observacoes">Observações / Observations</label>
+  <textarea id="observacoes" name="observacoes" placeholder="Informações adicionais / Additional information"></textarea>
 
-  <label>Observações / Observations</label>
-  <textarea id="observacoes" name="observacoes" placeholder="Informações adicionais / Additional information" rows="3"></textarea>
-
-  <input type="hidden" id="latitude" name="latitude">
-  <input type="hidden" id="longitude" name="longitude">
+  <input type="hidden" id="latitude"  name="latitude" />
+  <input type="hidden" id="longitude" name="longitude" />
 
   <button type="submit" id="sendBtn" disabled>📍 A obter localização... / Getting location...</button>
 </form>
@@ -59,64 +67,95 @@
 <p id="mensagem"></p>
 
 <script>
-// Substitua abaixo pelo SEU link de Apps Script
-const scriptURL = "https://script.google.com/macros/s/AKfycbyyjVXLMqAQt1Wpzfdy6Dxcgmk9FC0d6OnimNcZoO0c-xtQLpkP5uGdTFB8uJ9hUNP4/exec";
+  // 👉 Substitua pelo URL do seu Web App publicado
+  const scriptURL = "https://script.google.com/macros/s/AKfycbyyjVXLMqAQt1Wpzfdy6Dxcgmk9FC0d6OnimNcZoO0c-xtQLpkP5uGdTFB8uJ9hUNP4/exec";
 
-document.addEventListener("DOMContentLoaded", () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-      document.getElementById("latitude").value = pos.coords.latitude;
-      document.getElementById("longitude").value = pos.coords.longitude;
+  // Mostrar/ocultar campo "Outro / Other"
+  const concelhoEl = document.getElementById("concelho");
+  const outroDiv   = document.getElementById("outroConcelhoDiv");
+  const outroInp   = document.getElementById("outroConcelho");
+
+  concelhoEl.addEventListener("change", () => {
+    if (concelhoEl.value === "Outro") {
+      outroDiv.classList.remove("hidden");
+      outroInp.required = true;
+      outroInp.focus();
+    } else {
+      outroDiv.classList.add("hidden");
+      outroInp.required = false;
+      outroInp.value = "";
+    }
+  });
+
+  // Obter GPS
+  document.addEventListener("DOMContentLoaded", () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        document.getElementById("latitude").value  = pos.coords.latitude;
+        document.getElementById("longitude").value = pos.coords.longitude;
+        document.getElementById("sendBtn").disabled = false;
+        document.getElementById("sendBtn").textContent = "Enviar / Submit";
+      }, () => {
+        alert("⚠️ Não foi possível obter a localização / Unable to get location");
+        // Mesmo sem GPS, permitir envio
+        document.getElementById("sendBtn").disabled = false;
+        document.getElementById("sendBtn").textContent = "Enviar / Submit";
+      });
+    } else {
+      alert("⚠️ O seu dispositivo não suporta GPS / Your device does not support GPS");
       document.getElementById("sendBtn").disabled = false;
       document.getElementById("sendBtn").textContent = "Enviar / Submit";
-    }, () => {
-      alert("⚠️ Não foi possível obter a localização / Unable to get location");
-    });
-  } else {
-    alert("⚠️ O seu dispositivo não suporta GPS / Your device does not support GPS");
-  }
-});
-
-document.getElementById("cagarroForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const btn = document.getElementById("sendBtn");
-  const msg = document.getElementById("mensagem");
-  btn.disabled = true;
-  btn.textContent = "A enviar... / Sending...";
-
-  try {
-    const res = await fetch(scriptURL, {
-      method: "POST",
-      body: JSON.stringify({
-        nome: document.getElementById("nome").value,
-        estado: document.getElementById("estado").value,
-        observacoes: document.getElementById("observacoes").value,
-        latitude: document.getElementById("latitude").value,
-        longitude: document.getElementById("longitude").value
-      })
-    });
-
-    const text = await res.text();
-    let data = null;
-    try { data = JSON.parse(text); } catch(_) {}
-
-    if (res.ok && data && data.status === "success") {
-      msg.textContent = "✅ Registo enviado! Código / Code: " + data.codigo;
-      document.getElementById("cagarroForm").reset();
-    } else {
-      msg.innerHTML = "❌ Erro ao enviar.<br>" + (data ? (`${data.code || ''} ${data.message || ''}`) : text || "Tente novamente / Try again.");
     }
-  } catch (err) {
-    msg.textContent = "❌ Erro de rede. Verifique ligação / Network error.";
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "Enviar / Submit";
-  }
-});
-</script>
+  });
 
-</body>
-</html>
+  // Envio do formulário
+  document.getElementById("cagarroForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // Validação básica “Outro / Other”
+    if (concelhoEl.value === "Outro" && outroInp.value.trim() === "") {
+      outroInp.focus();
+      outroInp.reportValidity?.();
+      return;
+    }
+
+    const btn = document.getElementById("sendBtn");
+    const msg = document.getElementById("mensagem");
+    btn.disabled = true;
+    btn.textContent = "A enviar... / Sending...";
+
+    const payload = {
+      nome: document.getElementById("nome").value,
+      estado: document.getElementById("estado").value,
+      concelho: concelhoEl.value,
+      outroConcelho: outroInp.value,
+      observacoes: document.getElementById("observacoes").value,
+      latitude: document.getElementById("latitude").value,
+      longitude: document.getElementById("longitude").value
+    };
+
+    try {
+      const res = await fetch(scriptURL, { method: "POST", body: JSON.stringify(payload) });
+      const text = await res.text();
+      let data = null;
+      try { data = JSON.parse(text); } catch(_) {}
+
+      if (res.ok && data && data.status === "success") {
+        msg.textContent = `✅ Registo enviado! Código: ${data.codigo} | % Lua: ${data.moon_pct}% | Fase: ${data.moon_phase}`;
+        document.getElementById("cagarroForm").reset();
+        outroDiv.classList.add("hidden");
+        outroInp.required = false;
+      } else {
+        msg.innerHTML = "❌ Erro ao enviar.<br>" + (data ? (`${data.code || ''} ${data.message || ''}`) : text || "Tente novamente / Try again.");
+      }
+    } catch (err) {
+      msg.textContent = "❌ Erro de rede. Verifique ligação / Network error.";
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Enviar / Submit";
+    }
+  });
+</script>
 
 </body>
 </html>
