@@ -58,7 +58,7 @@
 </head>
 <body>
 
-<h2> Registo de Cagarros<br/> Cory's Shearwater Rescue</h2>
+<h2>🪿 Registo de Cagarros<br/>🪿 Cory's Shearwater Rescue</h2>
 <p class="subtitle">Formulário bilingue — Portuguese / English</p>
 
 <div id="netStatus" class="statusbar hidden"></div>
@@ -76,19 +76,13 @@
     <option value="Oleado / Oiled">Oleado / Oiled</option>
   </select>
 
-  <label for="concelho">Concelho / Municipality</label>
-  <select id="concelho" name="concelho" required>
+  <label for="local">Local / Location</label>
+  <select id="local" name="local" required>
     <option value="">-- Selecionar / Select --</option>
-    <option value="Vila Franca do Campo">Vila Franca do Campo</option>
-    <option value="Nordeste">Nordeste</option>
-    <option value="Povoação">Povoação</option>
-    <option value="Faial da Terra">Faial da Terra</option>
-    <option value="Outro">Outro / Other</option>
+    <option value="Sem localização / No location">Sem localização / No location</option>
+    <option value="Hotel de Cagarro / Shearwater Hotel">Hotel de Cagarro / Shearwater Hotel</option>
+    <option value="Fora da marina/Porto / Outside marina/Port">Fora da marina/Porto / Outside marina/Port</option>
   </select>
-  <div id="outroConcelhoDiv" class="hidden">
-    <input type="text" id="outroConcelho" placeholder="Especifique o concelho / Specify municipality" />
-    <div class="hint">Se escolher “Outro / Other”, escreva o nome do concelho acima.</div>
-  </div>
 
   <label for="observacoes">Observações / Observations</label>
   <textarea id="observacoes" name="observacoes" placeholder="Informações adicionais / Additional information"></textarea>
@@ -122,24 +116,8 @@
 </footer>
 
 <script>
-  // 👉 Substitua pelo seu URL do Apps Script (se mudar)
-  const scriptURL = "https://script.google.com/macros/s/AKfycbxrEarXlqmPBNiBsZHNMaylIzdgvtwWow6tP209WqrQsL3qXAIMOG_lcGWBSDtXypfK/exec";
-
-  // ===== Concelho "Outro / Other" =====
-  const concelhoEl = document.getElementById("concelho");
-  const outroDiv   = document.getElementById("outroConcelhoDiv");
-  const outroInp   = document.getElementById("outroConcelho");
-  concelhoEl.addEventListener("change", () => {
-    if (concelhoEl.value === "Outro") {
-      outroDiv.classList.remove("hidden");
-      outroInp.required = true;
-      outroInp.focus();
-    } else {
-      outroDiv.classList.add("hidden");
-      outroInp.required = false;
-      outroInp.value = "";
-    }
-  });
+  // Endpoint do Apps Script
+  const scriptURL = "https://script.google.com/macros/s/AKfycbxx2ivVioZSzhFa--i-Lm6WofK--0DhZwNMczxgK0GVS3Z-aeMWISmptbxRkvNcn_v1/exec";
 
   // ===== GPS =====
   document.addEventListener("DOMContentLoaded", () => {
@@ -189,7 +167,6 @@
   // ===== Submissão =====
   document.getElementById("cagarroForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    if (concelhoEl.value === "Outro" && outroInp.value.trim() === "") { outroInp.focus(); outroInp.reportValidity?.(); return; }
 
     const btn = document.getElementById("sendBtn");
     const msg = document.getElementById("mensagem");
@@ -202,8 +179,7 @@
     const payload = {
       nome: document.getElementById("nome").value,
       estado: document.getElementById("estado").value,
-      concelho: concelhoEl.value,
-      outroConcelho: outroInp.value,
+      local: document.getElementById("local").value, // <- novo campo
       observacoes: document.getElementById("observacoes").value,
       latitude: document.getElementById("latitude").value,
       longitude: document.getElementById("longitude").value
@@ -219,7 +195,6 @@
         bigCode.textContent = data.codigo || "";
         codeArea.classList.remove("hidden"); // só mostra agora
         e.target.reset();
-        outroDiv.classList.add("hidden"); outroInp.required = false;
       } else {
         addPending(payload);
         msg.innerHTML = "⚠️ Não foi possível gravar agora. Guardado em Pendentes.";
@@ -263,13 +238,11 @@
       copyBtn.textContent = "✅ Copiado!";
       setTimeout(() => copyBtn.textContent = old, 1400);
     } catch(_) {
-      // fallback: selecionar texto
       const r = document.createRange(); r.selectNodeContents(bigCode);
       const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
     }
   });
 
-  // Toque no código seleciona o texto
   bigCode.addEventListener("click", () => {
     const r = document.createRange(); r.selectNodeContents(bigCode);
     const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
