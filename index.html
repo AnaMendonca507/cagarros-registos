@@ -38,7 +38,7 @@
   .offline { background:#fdecea; color:#a4252c; border:1px solid #f5c6cb; }
   .queue { font-size: 13px; text-align:center; color:#eee; margin-top:8px; }
 
-  /* Código em destaque (inicialmente escondido) */
+  /* Código em destaque */
   .code-wrap { display:flex; justify-content:center; margin-top:12px; }
   .code-box {
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -51,7 +51,6 @@
   .code-actions { display:flex; justify-content:center; gap:10px; margin-top:8px; }
   .small-note { text-align:center; font-size:12px; color:#dbe1ff; margin-top:6px; }
 
-  /* Rodapé com logo */
   footer { margin: 28px 0 6px; display:flex; justify-content:center; }
   footer img { max-width: 160px; height:auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,.25)); opacity: 0.95; }
 </style>
@@ -87,17 +86,18 @@
   <label for="observacoes">Observações / Observations</label>
   <textarea id="observacoes" name="observacoes" placeholder="Informações adicionais / Additional information"></textarea>
 
+  <!-- GPS oculto + precisão -->
   <input type="hidden" id="latitude"  name="latitude" />
   <input type="hidden" id="longitude" name="longitude" />
+  <input type="hidden" id="gpsAcc"    name="gpsAcc" />
 
   <button type="submit" id="sendBtn" disabled>📍 A obter localização... / Getting location...</button>
+  <div id="gpsHint" class="hint"></div>
 </form>
 
-<!-- Botão e info de pendentes (offline) -->
 <button id="flushBtn" class="secondary hidden">📤 Enviar Pendentes / Send Pending</button>
 <div id="queueInfo" class="queue"></div>
 
-<!-- Mensagem e código (só aparece após envio) -->
 <p id="mensagem"></p>
 
 <div id="codeArea" class="hidden">
@@ -110,7 +110,6 @@
   <div id="codeNote" class="small-note">Guarde este código. / Keep this code.</div>
 </div>
 
-<!-- Rodapé com o logo: aparece sempre no fundo, depois do código -->
 <footer>
   <img src="./spea-logo-white.png" alt="SPEA" />
 </footer>
@@ -119,23 +118,78 @@
   // Endpoint do Apps Script
   const scriptURL = "https://script.google.com/macros/s/AKfycbxx2ivVioZSzhFa--i-Lm6WofK--0DhZwNMczxgK0GVS3Z-aeMWISmptbxRkvNcn_v1/exec";
 
-  // ===== GPS =====
+  // ===== GPS automático (exige ≤ 10 m, reinicia sozinho e envia precisão) =====
   document.addEventListener("DOMContentLoaded", () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(pos => {
-        document.getElementById("latitude").value  = pos.coords.latitude;
-        document.getElementById("longitude").value = pos.coords.longitude;
-        enableSend();
-      }, () => {
-        alert("⚠️ Não foi possível obter a localização / Unable to get location");
-        enableSend();
-      });
-    } else {
-      alert("⚠️ O seu dispositivo não suporta GPS / Your device does not support GPS");
-      enableSend();
+    const REQUIRED_ACC = 10;     // metros
+    const WATCH_MAX    = 30000;  // 30s por sessão
+    const RETRY_GAP    = 1500;   // pausa entre sessões
+    const STABLE_MS    = 2500;   // aguardar uns segundos antes de aceitar
+
+    const latEl = document.getElementById("latitude");
+    const lonEl = document.getElementById("longitude");
+    const accEl = document.getElementById("gpsAcc");
+    const btn   = document.getElementById("sendBtn");
+    const hint  = document.getElementById("gpsHint");
+
+    let watchId = null, timer = null, best = null, t0 = 0;
+
+    function lockSend(txt){ btn.disabled = true;  btn.textContent = txt || "📍 A obter localização..."; }
+    function unlockSend(){  btn.disabled = false; btn.textContent = "Enviar / Submit"; }
+    function showFix(f){
+      latEl.value = f.lat.toFixed(6);
+      lonEl.value = f.lon.toFixed(6);
+      accEl.value = Math.round(f.acc); // envia em metros
+      hint.textContent = `Precisão: ±${Math.round(f.acc)} m` + (f.acc<=REQUIRED_ACC ? " ✅" : ` — a melhorar até ≤ ${REQUIRED_ACC} m…`);
     }
+    function clearWatch(){
+      try{ if (watchId!==null) navigator.geolocation.clearWatch(watchId); }catch(_){}
+      watchId = null; if (timer){ clearTimeout(timer); timer = null; }
+    }
+    function startWatch(){
+      clearWatch(); best=null; t0=Date.now();
+      lockSend("📍 A obter localização...");
+      if (!("geolocation" in navigator)){
+        hint.textContent = "Dispositivo sem geolocalização.";
+        return; // fica bloqueado
+      }
+      hint.textContent = `A procurar satélites (alvo ≤ ${REQUIRED_ACC} m)…`;
+
+      watchId = navigator.geolocation.watchPosition(
+        pos => {
+          const acc = pos.coords.accuracy || 9999;
+          const fix = { lat: pos.coords.latitude, lon: pos.coords.longitude, acc };
+          if (!best || acc < best.acc){ best = fix; showFix(best); }
+
+          // Só desbloqueia quando atingir ≤ 10 m e estável
+          if (best.acc <= REQUIRED_ACC && (Date.now()-t0) > STABLE_MS){
+            hint.textContent = `GPS ok: ±${Math.round(best.acc)} m ✅`;
+            unlockSend();
+          } else {
+            lockSend("📍 A melhorar precisão…");
+          }
+        },
+        err => {
+          clearWatch();
+          hint.textContent = `Sem GPS preciso (${err.message}). A tentar novamente…`;
+          setTimeout(startWatch, RETRY_GAP);
+        },
+        { enableHighAccuracy: true, timeout: WATCH_MAX, maximumAge: 0 }
+      );
+
+      // reinício automático da sessão
+      timer = setTimeout(() => {
+        clearWatch();
+        if (!best) hint.textContent = "A tentar novamente obter fix…";
+        setTimeout(startWatch, RETRY_GAP);
+      }, WATCH_MAX);
+    }
+
+    // arranca e retoma automaticamente
+    startWatch();
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) clearWatch(); else startWatch();
+    });
   });
-  function enableSend(){ const b = document.getElementById("sendBtn"); b.disabled = false; b.textContent = "Enviar / Submit"; }
 
   // ===== Offline queue =====
   const LS_KEY = "cagarros_pendentes_v1";
@@ -172,17 +226,17 @@
     const msg = document.getElementById("mensagem");
     btn.disabled = true; btn.textContent = "A enviar... / Sending...";
 
-    // Esconder a área do código até termos um novo
     codeArea.classList.add("hidden");
     bigCode.textContent = "";
 
     const payload = {
       nome: document.getElementById("nome").value,
       estado: document.getElementById("estado").value,
-      local: document.getElementById("local").value, // <- novo campo
+      local: document.getElementById("local").value,
       observacoes: document.getElementById("observacoes").value,
       latitude: document.getElementById("latitude").value,
-      longitude: document.getElementById("longitude").value
+      longitude: document.getElementById("longitude").value,
+      gpsAcc: document.getElementById("gpsAcc").value   // <<< envia precisão (m)
     };
 
     try {
@@ -193,7 +247,7 @@
       if (res.ok && data && data.status === "success") {
         msg.textContent = "✅ Registo enviado! / Entry submitted!";
         bigCode.textContent = data.codigo || "";
-        codeArea.classList.remove("hidden"); // só mostra agora
+        codeArea.classList.remove("hidden");
         e.target.reset();
       } else {
         addPending(payload);
@@ -227,11 +281,10 @@
   }
   document.getElementById("flushBtn").addEventListener("click", flushPending);
 
-  // ===== Copiar código para clipboard =====
+  // ===== Copiar código =====
   copyBtn.addEventListener("click", async (ev) => {
     ev.preventDefault();
-    const code = bigCode.textContent.trim();
-    if (!code) return;
+    const code = bigCode.textContent.trim(); if (!code) return;
     try {
       await navigator.clipboard.writeText(code);
       const old = copyBtn.textContent;
