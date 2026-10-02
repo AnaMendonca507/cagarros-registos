@@ -1,0 +1,10 @@
+{
+  "name": "Registo de Cagarros",
+  "short_name": "Cagarros",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#2f4595",
+  "theme_color": "#2f4595",
+  "description": "Aplicação de registo de cagarros / Cory's Shearwater rescue recording app"
+}
