@@ -1,329 +1,1248 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="theme-color" content="#2f4595" />
-<title>Registo de Cagarros / Cory's Shearwater Rescue</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2f4595">
+
+<title>
+Registo de Cagarros / Cory's Shearwater Rescue
+</title>
+
 <style>
-  :root { --maxw: 520px; --spea-blue: #2f4595; }
-  body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    margin: 0 auto;
-    max-width: var(--maxw);
-    background: var(--spea-blue);
-    color: #fff;
-  }
-  h2 { text-align: center; margin: 12px 0 6px; }
-  p.subtitle { text-align:center; margin:0 0 16px; color:#dbe1ff; font-size:14px; }
 
-  label { font-weight: 600; display: block; margin-top: 14px; }
-  select, input, textarea, button {
-    width: 100%; padding: 12px; margin-top: 6px; font-size: 16px;
-    border:1px solid #ced4da; border-radius: 8px; background:#fff; color:#000;
-  }
-  textarea { resize: vertical; min-height: 72px; }
-  button { background-color: #28a745; color: #fff; border: none; cursor: pointer; font-weight: 700; border-radius: 8px; }
-  button.secondary { background:#0d6efd; margin-top:10px; }
-  button.ghost { background:transparent; border:2px solid #fff; color:#fff; }
-  button:disabled { background-color: #adb5bd; cursor:not-allowed; }
+:root {
+  --maxw: 520px;
+  --spea-blue: #2f4595;
+}
 
-  #mensagem { margin-top: 18px; text-align: center; font-weight: bold; min-height: 24px; }
-  .hint { font-size: 12px; color:#e0e0e0; margin-top:4px; }
-  .hidden { display:none !important; }
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  margin: 0 auto;
+  max-width: var(--maxw);
+  background: var(--spea-blue);
+  color: white;
+}
 
-  .statusbar { margin-bottom: 12px; padding:10px; border-radius:8px; font-weight:700; text-align:center; }
-  .online  { background:#e6f4ea; color:#1e7e34; border:1px solid #c7efd3; }
-  .offline { background:#fdecea; color:#a4252c; border:1px solid #f5c6cb; }
-  .queue { font-size: 13px; text-align:center; color:#eee; margin-top:8px; }
+h2 {
+  text-align: center;
+  margin: 12px 0 6px;
+}
 
-  /* Código em destaque */
-  .code-wrap { display:flex; justify-content:center; margin-top:12px; }
-  .code-box {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 2.2rem; line-height: 1.2;
-    background:#fff; border:3px dashed #28a745; color:#0b7a2a;
-    padding: 14px 18px; border-radius: 12px; user-select: all; text-align:center;
-    box-shadow: 0 3px 10px rgba(0,0,0,.15);
-    min-width: 72%;
-  }
-  .code-actions { display:flex; justify-content:center; gap:10px; margin-top:8px; }
-  .small-note { text-align:center; font-size:12px; color:#dbe1ff; margin-top:6px; }
+.subtitle {
+  text-align: center;
+  color: #dbe1ff;
+  font-size: 14px;
+}
 
-  footer { margin: 28px 0 6px; display:flex; justify-content:center; }
-  footer img { max-width: 160px; height:auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,.25)); opacity: 0.95; }
+label {
+  font-weight: 600;
+  display: block;
+  margin-top: 14px;
+}
+
+select,
+input,
+textarea,
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  font-size: 16px;
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+
+select,
+input,
+textarea {
+  border: 1px solid #ced4da;
+  background: white;
+  color: black;
+}
+
+textarea {
+  min-height: 72px;
+}
+
+button {
+  background: #28a745;
+  color: white;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #adb5bd;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.statusbar {
+  margin-bottom: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.online {
+  background: #e6f4ea;
+  color: #1e7e34;
+}
+
+.offline {
+  background: #fdecea;
+  color: #a4252c;
+}
+
+#mensagem {
+  text-align: center;
+  margin-top: 18px;
+  font-weight: bold;
+}
+
+.code-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.code-box {
+  font-family: monospace;
+  font-size: 2.1rem;
+  background: white;
+  color: #0b7a2a;
+  border: 3px dashed #28a745;
+  padding: 14px;
+  border-radius: 12px;
+  text-align: center;
+  user-select: all;
+}
+
+.code-status {
+  text-align: center;
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+.pending {
+  color: #ffe28a;
+}
+
+.synced {
+  color: #baf5c8;
+}
+
+.queue {
+  text-align: center;
+  margin-top: 12px;
+}
+
+.secondary {
+  background: #0d6efd;
+}
+
+.copy {
+  background: transparent;
+  border: 2px solid white;
+}
+
+footer {
+  margin-top: 28px;
+  display: flex;
+  justify-content: center;
+}
+
+footer img {
+  max-width: 160px;
+}
+
+.hint {
+  font-size: 12px;
+  color: #ddd;
+  margin-top: 5px;
+}
+
 </style>
+
 </head>
+
 <body>
 
-<h2> Registo de Cagarros<br/> Cory's Shearwater Rescue</h2>
-<p class="subtitle">Formulário bilingue — Portuguese / English</p>
 
-<div id="netStatus" class="statusbar hidden"></div>
+<h2>
+Registo de Cagarros<br>
+Cory's Shearwater Rescue
+</h2>
 
-<!-- ATENÇÃO: removi 'novalidate' para a validação nativa funcionar -->
+<p class="subtitle">
+Formulário bilingue — Portuguese / English
+</p>
+
+
+<div
+  id="netStatus"
+  class="statusbar">
+</div>
+
+
 <form id="cagarroForm">
-  <label for="nome">Nome / Name</label>
-  <input type="text" id="nome" name="nome" placeholder="Digite o seu nome / Enter your name" required />
 
-  <label for="estado">Estado / Status</label>
-  <select id="estado" name="estado" required>
-    <option value="">-- Escolher / Choose --</option>
-    <option value="Vivo / Alive">Vivo / Alive</option>
-    <option value="Morto / Dead">Morto / Dead</option>
-    <option value="Ferido / Injured">Ferido / Injured</option>
-    <option value="Oleado / Oiled">Oleado / Oiled</option>
-  </select>
+<label>
+Nome / Name
+</label>
 
-  <label for="local">Local / Location</label>
-  <select id="local" name="local" required>
-    <option value="">-- Selecionar / Select --</option>
-    <option value="Sem localização / No location">Sem localização / No location</option>
-    <option value="Hotel de Cagarro / Shearwater Hotel">Hotel de Cagarro / Shearwater Hotel</option>
-    <option value="Fora da marina/Porto / Outside marina/Port">Fora da marina/Porto / Outside marina/Port</option>
-    <option value="Marina/Porto / Marina/Port"> Marina/Porto / Marina/Port</option>
-  </select>
+<input
+  id="nome"
+  required>
 
-  <label for="observacoes">Observações / Observations</label>
-  <textarea id="observacoes" name="observacoes" placeholder="Informações adicionais / Additional information"></textarea>
 
-  <!-- GPS oculto + precisão -->
-  <input type="hidden" id="latitude"  name="latitude" />
-  <input type="hidden" id="longitude" name="longitude" />
-  <input type="hidden" id="gpsAcc"    name="gpsAcc" />
+<label>
+Estado / Status
+</label>
 
-  <button type="submit" id="sendBtn" disabled>📍 A obter localização... / Getting location...</button>
-  <div id="gpsHint" class="hint"></div>
+<select
+  id="estado"
+  required>
+
+<option value="">
+-- Escolher / Choose --
+</option>
+
+<option value="Vivo / Alive">
+Vivo / Alive
+</option>
+
+<option value="Morto / Dead">
+Morto / Dead
+</option>
+
+<option value="Ferido / Injured">
+Ferido / Injured
+</option>
+
+<option value="Oleado / Oiled">
+Oleado / Oiled
+</option>
+
+</select>
+
+
+<label>
+Local / Location
+</label>
+
+<select
+  id="local"
+  required>
+
+<option value="">
+-- Selecionar / Select --
+</option>
+
+<option value="Sem localização / No location">
+Sem localização / No location
+</option>
+
+<option value="Hotel de Cagarro / Shearwater Hotel">
+Hotel de Cagarro / Shearwater Hotel
+</option>
+
+<option value="Fora da marina/Porto / Outside marina/Port">
+Fora da marina/Porto / Outside marina/Port
+</option>
+
+<option value="Marina/Porto / Marina/Port">
+Marina/Porto / Marina/Port
+</option>
+
+</select>
+
+
+<label>
+Observações / Observations
+</label>
+
+<textarea
+  id="observacoes">
+</textarea>
+
+
+<input
+  type="hidden"
+  id="latitude">
+
+<input
+  type="hidden"
+  id="longitude">
+
+<input
+  type="hidden"
+  id="gpsAcc">
+
+
+<div
+  id="gpsHint"
+  class="hint">
+A obter localização...
+</div>
+
+
+<button
+  id="sendBtn"
+  type="submit">
+
+Guardar registo / Save entry
+
+</button>
+
 </form>
 
-<button id="flushBtn" class="secondary hidden">📤 Enviar Pendentes / Send Pending</button>
-<div id="queueInfo" class="queue"></div>
 
 <p id="mensagem"></p>
 
-<div id="codeArea" class="hidden">
-  <div id="codeWrap" class="code-wrap">
-    <div id="bigCode" class="code-box" title="Toque para selecionar / Tap to select"></div>
-  </div>
-  <div class="code-actions">
-    <button id="copyBtn" class="ghost">📋 Copiar código / Copy code</button>
-  </div>
-  <div id="codeNote" class="small-note">Guarde este código. / Keep this code.</div>
+
+<div
+  id="codeArea"
+  class="hidden">
+
+<div class="code-wrap">
+
+<div
+  id="bigCode"
+  class="code-box">
 </div>
 
+</div>
+
+
+<div
+  id="syncStatus"
+  class="code-status">
+</div>
+
+
+<button
+  id="copyBtn"
+  class="copy">
+
+📋 Copiar código / Copy code
+
+</button>
+
+</div>
+
+
+<div
+  id="queueInfo"
+  class="queue">
+</div>
+
+
+<button
+  id="flushBtn"
+  class="secondary hidden">
+
+📤 Sincronizar pendentes /
+Sync pending
+
+</button>
+
+
 <footer>
-  <img src="./spea-logo-white.png" alt="SPEA" />
+
+<img
+  src="./spea-logo-white.png"
+  alt="SPEA">
+
 </footer>
 
+
 <script>
-  // Endpoint do Apps Script (mantido)
-  const scriptURL = "https://script.google.com/macros/s/AKfycbwNjzfFDczI-TWkRUhv_z_lcjVZ0xZF4LyPGYqW1NE8YRtmouq8gxsaltCrTX-CmXMC/exec";
 
-  // ===== GPS automático (alvo ≤ 5 m; fallback aos 30 s; sessão 90 s) =====
-  document.addEventListener("DOMContentLoaded", () => {
-    const REQUIRED_ACC = 5;       // metros
-    const SOFT_TIMEOUT = 30000;   // após 30 s, permitir envio mesmo sem 5 m
-    const WATCH_MAX    = 90000;   // 90 s por sessão antes de reabrir
-    const RETRY_GAP    = 1500;    // 1.5 s entre sessões
-    const STABLE_MS    = 2500;    // ~2.5 s estável
+/************************************
+ ENDPOINT
+************************************/
 
-    const latEl = document.getElementById("latitude");
-    const lonEl = document.getElementById("longitude");
-    const accEl = document.getElementById("gpsAcc");
-    const btn   = document.getElementById("sendBtn");
-    const hint  = document.getElementById("gpsHint");
+const scriptURL =
+"https://script.google.com/macros/s/AKfycbwNjzfFDczI-TWkRUhv_z_lcjVZ0xZF4LyPGYqW1NE8YRtmouq8gxsaltCrTX-CmXMC/exec";
 
-    let watchId = null, sessionTimer = null, softTimer = null, best = null, t0 = 0, unlocked = false;
 
-    function lockSend(txt){ if (!unlocked) { btn.disabled = true; btn.textContent = txt || "📍 A obter localização..."; } }
-    function unlockSend(txt){ unlocked = true; btn.disabled = false; btn.textContent = txt || "Enviar / Submit"; }
-    function showFix(f){
-      latEl.value = f.lat.toFixed(6);
-      lonEl.value = f.lon.toFixed(6);
-      accEl.value = Math.round(f.acc);
-      hint.textContent = `Precisão: ±${Math.round(f.acc)} m` + (f.acc<=REQUIRED_ACC ? " ✅" : ` — a melhorar até ≤ ${REQUIRED_ACC} m…`);
-    }
-    function clearWatch(){
-      try{ if (watchId!==null) navigator.geolocation.clearWatch(watchId); }catch(_){}
-      watchId = null;
-      if (sessionTimer){ clearTimeout(sessionTimer); sessionTimer = null; }
-      if (softTimer){ clearTimeout(softTimer); softTimer = null; }
-    }
-    function startWatch(){
-      clearWatch(); best = null; t0 = Date.now(); unlocked = false;
-      lockSend("📍 A obter localização...");
-      if (!("geolocation" in navigator)){
-        hint.textContent = "Dispositivo sem geolocalização.";
-        return;
+/************************************
+ FILA LOCAL
+************************************/
+
+const LS_KEY =
+"cagarros_pendentes_v1";
+
+
+function getQueue() {
+
+  try {
+
+    return JSON.parse(
+      localStorage.getItem(
+        LS_KEY
+      ) || "[]"
+    );
+
+  } catch (_) {
+
+    return [];
+
+  }
+
+}
+
+
+function setQueue(queue) {
+
+  localStorage.setItem(
+    LS_KEY,
+    JSON.stringify(queue)
+  );
+
+  updateQueueUI();
+
+}
+
+
+/************************************
+ SUBMISSION ID
+************************************/
+
+function generateSubmissionId() {
+
+  if (
+    crypto &&
+    crypto.randomUUID
+  ) {
+
+    return crypto.randomUUID();
+
+  }
+
+  const arr =
+    new Uint32Array(4);
+
+  crypto.getRandomValues(arr);
+
+  return Array
+    .from(arr)
+    .map(
+      n =>
+        n.toString(16)
+    )
+    .join("-");
+
+}
+
+
+/************************************
+ DATA DOS AÇORES
+ cutoff = 06:00
+************************************/
+
+function getAzoresCountingDate(
+  date = new Date()
+) {
+
+  const parts =
+    new Intl.DateTimeFormat(
+      "en-GB",
+      {
+        timeZone:
+          "Atlantic/Azores",
+
+        year:
+          "numeric",
+
+        month:
+          "2-digit",
+
+        day:
+          "2-digit",
+
+        hour:
+          "2-digit",
+
+        hourCycle:
+          "h23"
       }
-      hint.textContent = `A procurar satélites (alvo ≤ ${REQUIRED_ACC} m)…`;
+    )
+    .formatToParts(date);
 
-      // Desbloqueio suave aos 30 s
-      softTimer = setTimeout(() => {
-        if (!unlocked){
-          if (best){
-            hint.textContent = `⚠️ Precisão insuficiente após 30 s: ±${Math.round(best.acc)} m. Podes enviar assim.`;
-            unlockSend("Enviar (precisão baixa)");
-          } else {
-            hint.textContent = "⚠️ Sem leituras após 30 s. Podes enviar assim (sem GPS).";
-            accEl.value = "";
-            unlockSend("Enviar (sem GPS)");
-          }
-        }
-      }, SOFT_TIMEOUT);
 
-      watchId = navigator.geolocation.watchPosition(
-        pos => {
-          const acc = pos.coords.accuracy || 9999;
-          const fix = { lat: pos.coords.latitude, lon: pos.coords.longitude, acc };
-          if (!best || acc < best.acc){ best = fix; showFix(best); }
-          if (!unlocked && best.acc <= REQUIRED_ACC && (Date.now()-t0) > STABLE_MS){
-            hint.textContent = `GPS ok: ±${Math.round(best.acc)} m ✅`;
-            unlockSend();
-          } else if (!unlocked){
-            lockSend("📍 A melhorar precisão…");
-          }
-        },
-        err => {
-          // erro: tenta nova sessão (soft timeout mantém-se)
-          try{ if (watchId!==null) navigator.geolocation.clearWatch(watchId); }catch(_){}
-          watchId = null;
-          if (!unlocked) hint.textContent = `Sem GPS preciso (${err.message}). Nova tentativa…`;
-          setTimeout(() => { if (!document.hidden) startWatch(); }, RETRY_GAP);
-        },
-        { enableHighAccuracy: true, timeout: WATCH_MAX, maximumAge: 0 }
+  const obj = {};
+
+  parts.forEach(
+    p =>
+      obj[p.type] =
+        p.value
+  );
+
+
+  let y =
+    Number(obj.year);
+
+  let m =
+    Number(obj.month);
+
+  let d =
+    Number(obj.day);
+
+  let h =
+    Number(obj.hour);
+
+
+  let countingDate =
+    new Date(
+      Date.UTC(
+        y,
+        m - 1,
+        d
+      )
+    );
+
+
+  if (h < 6) {
+
+    countingDate.setUTCDate(
+      countingDate.getUTCDate()
+      - 1
+    );
+
+  }
+
+
+  return {
+
+    day:
+      String(
+        countingDate.getUTCDate()
+      ).padStart(2, "0"),
+
+    month:
+      String(
+        countingDate.getUTCMonth()
+        + 1
+      ).padStart(2, "0")
+
+  };
+
+}
+
+
+/************************************
+ GERAR CÓDIGO
+
+ Sem:
+ I L O S
+ 0 1 5
+************************************/
+
+function generateCode() {
+
+  const alphabet =
+    "ABCDEFGHJKMNPQRTUVWXYZ2346789";
+
+  const bytes =
+    new Uint32Array(6);
+
+  crypto.getRandomValues(bytes);
+
+  let random = "";
+
+  for (
+    let i = 0;
+    i < 6;
+    i++
+  ) {
+
+    random +=
+      alphabet[
+        bytes[i] %
+        alphabet.length
+      ];
+
+  }
+
+
+  const date =
+    getAzoresCountingDate();
+
+
+  return (
+    "CA-" +
+    date.day +
+    date.month +
+    "-" +
+    random
+  );
+
+}
+
+
+/************************************
+ GPS
+
+ Não bloqueia o formulário.
+************************************/
+
+function startGPS() {
+
+  const hint =
+    document.getElementById(
+      "gpsHint"
+    );
+
+  if (
+    !navigator.geolocation
+  ) {
+
+    hint.textContent =
+      "Localização não disponível.";
+
+    return;
+
+  }
+
+
+  navigator.geolocation
+    .getCurrentPosition(
+
+      pos => {
+
+        document
+          .getElementById(
+            "latitude"
+          )
+          .value =
+          pos.coords.latitude;
+
+
+        document
+          .getElementById(
+            "longitude"
+          )
+          .value =
+          pos.coords.longitude;
+
+
+        document
+          .getElementById(
+            "gpsAcc"
+          )
+          .value =
+          Math.round(
+            pos.coords.accuracy
+          );
+
+
+        hint.textContent =
+          "Precisão aproximada: ±" +
+          Math.round(
+            pos.coords.accuracy
+          ) +
+          " m";
+
+      },
+
+
+      () => {
+
+        hint.textContent =
+          "⚠️ Localização não disponível. Pode registar na mesma.";
+
+      },
+
+
+      {
+
+        enableHighAccuracy:
+          true,
+
+        timeout:
+          10000,
+
+        maximumAge:
+          30000
+
+      }
+
+    );
+
+}
+
+
+/************************************
+ ESTADO INTERNET
+************************************/
+
+const netStatus =
+  document.getElementById(
+    "netStatus"
+  );
+
+
+function updateNetworkUI() {
+
+  if (navigator.onLine) {
+
+    netStatus.className =
+      "statusbar online";
+
+    netStatus.textContent =
+      "Ligação ativa / Online";
+
+  } else {
+
+    netStatus.className =
+      "statusbar offline";
+
+    netStatus.textContent =
+      "Sem rede — os registos ficam guardados neste dispositivo / Offline";
+
+  }
+
+}
+
+
+window.addEventListener(
+  "online",
+  () => {
+
+    updateNetworkUI();
+
+    flushPending();
+
+  }
+);
+
+
+window.addEventListener(
+  "offline",
+  updateNetworkUI
+);
+
+
+/************************************
+ MOSTRAR CÓDIGO
+************************************/
+
+function showCode(
+  codigo,
+  synced
+) {
+
+  const area =
+    document.getElementById(
+      "codeArea"
+    );
+
+  const big =
+    document.getElementById(
+      "bigCode"
+    );
+
+  const status =
+    document.getElementById(
+      "syncStatus"
+    );
+
+
+  big.textContent =
+    codigo;
+
+
+  area.classList.remove(
+    "hidden"
+  );
+
+
+  if (synced) {
+
+    status.className =
+      "code-status synced";
+
+    status.textContent =
+      "✅ Sincronizado / Synced";
+
+  } else {
+
+    status.className =
+      "code-status pending";
+
+    status.textContent =
+      "📦 Pendente de sincronização / Pending sync";
+
+  }
+
+}
+
+
+/************************************
+ GUARDAR REGISTO
+************************************/
+
+document
+  .getElementById(
+    "cagarroForm"
+  )
+  .addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+
+      const form =
+        event.target;
+
+
+      if (
+        !form.checkValidity()
+      ) {
+
+        form.reportValidity();
+
+        return;
+
+      }
+
+
+      const button =
+        document.getElementById(
+          "sendBtn"
+        );
+
+
+      button.disabled =
+        true;
+
+
+      const codigo =
+        generateCode();
+
+
+      const submissionId =
+        generateSubmissionId();
+
+
+      const payload = {
+
+        nome:
+          document
+            .getElementById(
+              "nome"
+            )
+            .value,
+
+        estado:
+          document
+            .getElementById(
+              "estado"
+            )
+            .value,
+
+        local:
+          document
+            .getElementById(
+              "local"
+            )
+            .value,
+
+        observacoes:
+          document
+            .getElementById(
+              "observacoes"
+            )
+            .value,
+
+        latitude:
+          document
+            .getElementById(
+              "latitude"
+            )
+            .value,
+
+        longitude:
+          document
+            .getElementById(
+              "longitude"
+            )
+            .value,
+
+        gpsAcc:
+          document
+            .getElementById(
+              "gpsAcc"
+            )
+            .value,
+
+        codigo:
+          codigo,
+
+        submissionId:
+          submissionId
+
+      };
+
+
+      /*****
+       PRIMEIRO GUARDA LOCALMENTE
+      *****/
+
+      const queue =
+        getQueue();
+
+
+      queue.push({
+
+        payload:
+          payload,
+
+        savedAt:
+          new Date()
+            .toISOString()
+
+      });
+
+
+      setQueue(queue);
+
+
+      /*****
+       MOSTRAR CÓDIGO IMEDIATAMENTE
+      *****/
+
+      showCode(
+        codigo,
+        false
       );
 
-      // reinício de sessão para tentar melhorar continuamente
-      sessionTimer = setTimeout(() => {
-        try{ if (watchId!==null) navigator.geolocation.clearWatch(watchId); }catch(_){}
-        watchId = null;
-        if (!unlocked && !best) hint.textContent = "A tentar novamente obter fix…";
-        setTimeout(() => { if (!document.hidden) startWatch(); }, RETRY_GAP);
-      }, WATCH_MAX);
-    }
 
-    // arranca e reabre quando volta ao separador
-    startWatch();
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) clearWatch(); else startWatch();
-    });
-  });
+      document
+        .getElementById(
+          "mensagem"
+        )
+        .textContent =
+        "✅ Registo guardado / Entry saved";
 
-  // ===== Offline queue =====
-  const LS_KEY = "cagarros_pendentes_v1";
-  const netBar = document.getElementById("netStatus");
-  const flushBtn = document.getElementById("flushBtn");
-  const queueInfo = document.getElementById("queueInfo");
-  function getQueue(){ try { return JSON.parse(localStorage.getItem(LS_KEY) || "[]"); } catch(_){ return []; } }
-  function setQueue(arr){ localStorage.setItem(LS_KEY, JSON.stringify(arr)); updateQueueUI(); }
-  function addPending(payload){ const q = getQueue(); q.push({ payload, savedAt: new Date().toISOString() }); setQueue(q); }
-  function updateQueueUI(){
-    const qlen = getQueue().length;
-    queueInfo.textContent = qlen > 0 ? `🗂️ Pendentes: ${qlen}` : "";
-    flushBtn.classList.toggle("hidden", qlen === 0);
-  }
-  function setNetBar(){
-    netBar.classList.remove("hidden");
-    if (navigator.onLine) { netBar.className = "statusbar online";  netBar.textContent = "Ligação ativa / Online"; }
-    else                  { netBar.className = "statusbar offline"; netBar.textContent = "Sem rede — pendentes / Offline — will be queued"; }
-  }
-  window.addEventListener("online", () => { setNetBar(); flushPending(); });
-  window.addEventListener("offline", setNetBar);
-  setNetBar(); updateQueueUI();
 
-  // ===== Área do código =====
-  const codeArea = document.getElementById("codeArea");
-  const bigCode  = document.getElementById("bigCode");
-  const copyBtn  = document.getElementById("copyBtn");
+      /*****
+       LIMPAR FORMULÁRIO
+      *****/
 
-  // ===== Submissão =====
-  document.getElementById("cagarroForm").addEventListener("submit", async (e) => {
-    const form = e.target;
-    if (!form.checkValidity()) { form.reportValidity(); return; } // Nome & Estado obrigatórios
-    e.preventDefault();
+      form.reset();
 
-    const btn = document.getElementById("sendBtn");
-    const msg = document.getElementById("mensagem");
-    btn.disabled = true; btn.textContent = "A enviar... / Sending...";
 
-    codeArea.classList.add("hidden");
-    bigCode.textContent = "";
+      /*****
+       TENTAR SINCRONIZAR
+      *****/
 
-    const payload = {
-      nome: document.getElementById("nome").value,
-      estado: document.getElementById("estado").value,
-      local: document.getElementById("local").value,
-      observacoes: document.getElementById("observacoes").value,
-      latitude: document.getElementById("latitude").value,
-      longitude: document.getElementById("longitude").value,
-      gpsAcc: document.getElementById("gpsAcc").value   // envia precisão (m)
-    };
+      if (
+        navigator.onLine
+      ) {
 
-    try {
-      const res = await fetch(scriptURL, { method: "POST", body: JSON.stringify(payload) });
-      const text = await res.text();
-      let data = null; try { data = JSON.parse(text); } catch(_) {}
+        await syncSubmission(
+          submissionId
+        );
 
-      if (res.ok && data && data.status === "success") {
-        msg.textContent = "✅ Registo enviado! / Entry submitted!";
-        bigCode.textContent = data.codigo || "";
-        codeArea.classList.remove("hidden");
-        form.reset();
-      } else {
-        addPending(payload);
-        msg.innerHTML = "⚠️ Não foi possível gravar agora. Guardado em Pendentes.";
       }
-    } catch (_) {
-      addPending(payload);
-      msg.textContent = "📦 Sem rede: guardado em Pendentes / Saved offline.";
-    } finally {
-      btn.disabled = false; btn.textContent = "Enviar / Submit";
-    }
-  });
 
-  // ===== Enviar Pendentes =====
-  async function flushPending(){
-    if (!navigator.onLine) return;
-    const q = getQueue(); if (q.length === 0) return;
-    flushBtn.disabled = true; flushBtn.textContent = "A enviar pendentes... / Sending...";
-    let ok = 0, fail = 0; const newQ = [];
-    for (const item of q) {
-      try {
-        const res = await fetch(scriptURL, { method: "POST", body: JSON.stringify(item.payload) });
-        if (res.ok) ok++; else { fail++; newQ.push(item); }
-      } catch(_) { fail++; newQ.push(item); }
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        "Guardar registo / Save entry";
+
+
+      startGPS();
+
     }
-    setQueue(newQ);
-    flushBtn.disabled = false; flushBtn.textContent = "📤 Enviar Pendentes / Send Pending";
-    const msg = document.getElementById("mensagem");
-    if (ok>0) msg.textContent = `📤 Enviados: ${ok} | Por enviar: ${newQ.length}`;
-    if (fail>0 && ok===0) msg.textContent = "⚠️ Falha ao enviar pendentes.";
+  );
+
+
+/************************************
+ SINCRONIZAR UM REGISTO
+************************************/
+
+async function syncSubmission(
+  submissionId
+) {
+
+  const queue =
+    getQueue();
+
+
+  const item =
+    queue.find(
+      q =>
+        q.payload
+          .submissionId ===
+        submissionId
+    );
+
+
+  if (!item) {
+    return;
   }
-  document.getElementById("flushBtn").addEventListener("click", flushPending);
 
-  // ===== Copiar código =====
-  copyBtn.addEventListener("click", async (ev) => {
-    ev.preventDefault();
-    const code = bigCode.textContent.trim(); if (!code) return;
+
+  try {
+
+    const response =
+      await fetch(
+        scriptURL,
+        {
+
+          method:
+            "POST",
+
+          body:
+            JSON.stringify(
+              item.payload
+            )
+
+        }
+      );
+
+
+    const text =
+      await response.text();
+
+
+    let data =
+      null;
+
+
     try {
-      await navigator.clipboard.writeText(code);
-      const old = copyBtn.textContent;
-      copyBtn.textContent = "✅ Copiado!";
-      setTimeout(() => copyBtn.textContent = old, 1400);
-    } catch(_) {
-      const r = document.createRange(); r.selectNodeContents(bigCode);
-      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
-    }
-  });
 
-  bigCode.addEventListener("click", () => {
-    const r = document.createRange(); r.selectNodeContents(bigCode);
-    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
-  });
+      data =
+        JSON.parse(text);
+
+    } catch (_) {}
+
+
+    if (
+      response.ok &&
+      data &&
+      data.status ===
+        "success"
+    ) {
+
+      const newQueue =
+        getQueue()
+          .filter(
+            q =>
+              q.payload
+                .submissionId !==
+              submissionId
+          );
+
+
+      setQueue(
+        newQueue
+      );
+
+
+      if (
+        document
+          .getElementById(
+            "bigCode"
+          )
+          .textContent ===
+        item.payload.codigo
+      ) {
+
+        showCode(
+          item.payload.codigo,
+          true
+        );
+
+      }
+
+    }
+
+  } catch (_) {
+
+    // permanece pendente
+
+  }
+
+}
+
+
+/************************************
+ SINCRONIZAR PENDENTES
+************************************/
+
+async function flushPending() {
+
+  if (
+    !navigator.onLine
+  ) {
+    return;
+  }
+
+
+  const queue =
+    [...getQueue()];
+
+
+  for (
+    const item of queue
+  ) {
+
+    await syncSubmission(
+      item.payload
+        .submissionId
+    );
+
+  }
+
+}
+
+
+document
+  .getElementById(
+    "flushBtn"
+  )
+  .addEventListener(
+    "click",
+    flushPending
+  );
+
+
+/************************************
+ CONTADOR DE PENDENTES
+************************************/
+
+function updateQueueUI() {
+
+  const total =
+    getQueue().length;
+
+
+  const info =
+    document.getElementById(
+      "queueInfo"
+    );
+
+
+  const button =
+    document.getElementById(
+      "flushBtn"
+    );
+
+
+  if (total > 0) {
+
+    info.textContent =
+      "📦 " +
+      total +
+      " registo(s) por sincronizar";
+
+
+    button.classList.remove(
+      "hidden"
+    );
+
+  } else {
+
+    info.textContent =
+      "✅ Todos os registos sincronizados";
+
+
+    button.classList.add(
+      "hidden"
+    );
+
+  }
+
+}
+
+
+/************************************
+ COPIAR CÓDIGO
+************************************/
+
+document
+  .getElementById(
+    "copyBtn"
+  )
+  .addEventListener(
+    "click",
+    async event => {
+
+      event.preventDefault();
+
+
+      const code =
+        document
+          .getElementById(
+            "bigCode"
+          )
+          .textContent;
+
+
+      try {
+
+        await navigator
+          .clipboard
+          .writeText(code);
+
+
+        event.target
+          .textContent =
+          "✅ Copiado";
+
+
+        setTimeout(
+          () => {
+
+            event.target
+              .textContent =
+              "📋 Copiar código / Copy code";
+
+          },
+          1500
+        );
+
+      } catch (_) {}
+
+    }
+  );
+
+
+/************************************
+ ARRANQUE
+************************************/
+
+updateNetworkUI();
+
+updateQueueUI();
+
+startGPS();
+
+
+if (
+  navigator.onLine
+) {
+
+  flushPending();
+
+}
+
 </script>
 
 </body>
 </html>
-
