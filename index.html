@@ -13,16 +13,20 @@
   name="theme-color"
   content="#2f4595">
 
+<link
+  rel="manifest"
+  href="./manifest.webmanifest">
+
 <title>
-Registo de Cagarros / Cory's Shearwater Rescue
+Registo de Cagarros
 </title>
 
 
 <style>
 
 :root {
-  --maxw: 520px;
   --spea-blue: #2f4595;
+  --maxw: 520px;
 }
 
 body {
@@ -31,9 +35,11 @@ body {
     Arial,
     sans-serif;
 
-  padding: 20px;
+  margin:
+    0 auto;
 
-  margin: 0 auto;
+  padding:
+    20px;
 
   max-width:
     var(--maxw);
@@ -47,250 +53,260 @@ body {
 }
 
 h2 {
-  text-align: center;
-  margin: 12px 0 6px;
+
+  text-align:
+    center;
+
 }
 
 .subtitle {
 
-  text-align: center;
+  text-align:
+    center;
 
-  color: #dbe1ff;
-
-  font-size: 14px;
-
-  margin-bottom: 16px;
+  color:
+    #dbe1ff;
 
 }
 
-label {
+.status {
 
-  font-weight: 600;
+  padding:
+    11px;
 
-  display: block;
+  margin:
+    12px 0;
 
-  margin-top: 14px;
+  border-radius:
+    8px;
 
-}
+  text-align:
+    center;
 
-select,
-input,
-textarea,
-button {
-
-  width: 100%;
-
-  padding: 12px;
-
-  margin-top: 6px;
-
-  font-size: 16px;
-
-  box-sizing: border-box;
-
-  border-radius: 8px;
+  font-weight:
+    bold;
 
 }
 
-select,
-input,
-textarea {
+.ready {
 
-  border:
-    1px solid #ced4da;
+  background:
+    #e6f4ea;
 
-  background: white;
-
-  color: black;
+  color:
+    #1e7e34;
 
 }
 
-textarea {
-  min-height: 72px;
-}
+.waiting {
 
-button {
+  background:
+    #fff3cd;
 
-  background: #28a745;
-
-  color: white;
-
-  border: none;
-
-  font-weight: 700;
-
-  cursor: pointer;
-
-}
-
-button:disabled {
-  background: #adb5bd;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.statusbar {
-
-  margin-bottom: 12px;
-
-  padding: 10px;
-
-  border-radius: 8px;
-
-  text-align: center;
-
-  font-weight: 700;
-
-}
-
-.online {
-
-  background: #e6f4ea;
-
-  color: #1e7e34;
+  color:
+    #795500;
 
 }
 
 .offline {
 
-  background: #fdecea;
+  background:
+    #fdecea;
 
-  color: #a4252c;
-
-}
-
-#mensagem {
-
-  text-align: center;
-
-  margin-top: 18px;
-
-  font-weight: bold;
+  color:
+    #a4252c;
 
 }
 
-.code-wrap {
+label {
 
-  display: flex;
+  display:
+    block;
 
-  justify-content: center;
+  margin-top:
+    14px;
 
-  margin-top: 12px;
+  font-weight:
+    bold;
+
+}
+
+input,
+select,
+textarea,
+button {
+
+  width:
+    100%;
+
+  box-sizing:
+    border-box;
+
+  padding:
+    12px;
+
+  margin-top:
+    6px;
+
+  border-radius:
+    8px;
+
+  font-size:
+    16px;
+
+}
+
+input,
+select,
+textarea {
+
+  background:
+    white;
+
+  color:
+    black;
+
+  border:
+    1px solid #ccc;
+
+}
+
+textarea {
+
+  min-height:
+    75px;
+
+}
+
+button {
+
+  border:
+    none;
+
+  background:
+    #28a745;
+
+  color:
+    white;
+
+  font-weight:
+    bold;
+
+}
+
+button:disabled {
+
+  background:
+    #999;
+
+}
+
+.hidden {
+
+  display:
+    none !important;
+
+}
+
+.hint {
+
+  margin-top:
+    6px;
+
+  font-size:
+    12px;
+
+  color:
+    #ddd;
 
 }
 
 .code-box {
 
-  font-family: monospace;
+  margin-top:
+    18px;
 
-  font-size: 2.25rem;
+  padding:
+    15px;
 
-  background: white;
+  background:
+    white;
 
-  color: #0b7a2a;
+  color:
+    #087a2a;
 
   border:
     3px dashed #28a745;
 
-  padding:
-    14px 16px;
-
   border-radius:
-    12px;
+    10px;
 
   text-align:
     center;
+
+  font-family:
+    monospace;
+
+  font-size:
+    2.1rem;
+
+  font-weight:
+    bold;
 
   user-select:
     all;
 
 }
 
-.code-status {
+.center {
 
-  text-align: center;
-
-  margin-top: 8px;
-
-  font-weight: bold;
-
-}
-
-.pending {
-  color: #ffe28a;
-}
-
-.synced {
-  color: #baf5c8;
-}
-
-.queue {
-
-  text-align: center;
-
-  margin-top: 12px;
+  text-align:
+    center;
 
 }
 
 .secondary {
-  background: #0d6efd;
+
+  background:
+    #0d6efd;
+
 }
 
 .copy {
 
-  background: transparent;
+  background:
+    transparent;
 
   border:
     2px solid white;
 
 }
 
-.hint {
+.small {
 
-  font-size: 12px;
+  font-size:
+    12px;
 
-  color: #ddd;
-
-  margin-top: 5px;
-
-}
-
-.privacy-note {
-
-  font-size: 12px;
-
-  color: #dbe1ff;
-
-  margin-top: 6px;
-
-}
-
-.device-note {
-
-  font-size: 11px;
-
-  color: #cbd3ff;
-
-  margin-top: 15px;
-
-  text-align: center;
+  color:
+    #dbe1ff;
 
 }
 
 footer {
 
-  margin-top: 28px;
+  margin-top:
+    30px;
 
-  display: flex;
-
-  justify-content: center;
+  text-align:
+    center;
 
 }
 
 footer img {
-  max-width: 160px;
+
+  max-width:
+    160px;
+
 }
 
 </style>
@@ -308,13 +324,23 @@ Cory's Shearwater Rescue
 
 
 <p class="subtitle">
-Formulário bilingue - Portuguese / English
+Português / English
 </p>
 
 
 <div
-  id="netStatus"
-  class="statusbar">
+  id="deviceStatus"
+  class="status waiting">
+
+A preparar este telemóvel...<br>
+Preparing this phone...
+
+</div>
+
+
+<div
+  id="networkStatus"
+  class="status">
 </div>
 
 
@@ -332,15 +358,12 @@ Nome / Name
   required>
 
 
-<div class="privacy-note">
+<p class="small">
 
-O nome fica guardado neste dispositivo.
-
-<br>
-
+O nome fica guardado neste dispositivo.<br>
 Your name is remembered on this device.
 
-</div>
+</p>
 
 
 
@@ -410,43 +433,13 @@ Marina/Porto / Marina/Port
 
 
 
-<label for="nevoeiroObservado">
-Nevoeiro observado / Fog observed
-</label>
-
-
-<select
-  id="nevoeiroObservado"
-  required>
-
-<option value="">
--- Selecionar / Select --
-</option>
-
-<option value="Sim / Yes">
-Sim / Yes
-</option>
-
-<option value="Não / No">
-Não / No
-</option>
-
-<option value="Não sei / Don't know">
-Não sei / Don't know
-</option>
-
-</select>
-
-
-
 <label for="observacoes">
 Observações / Observations
 </label>
 
 
 <textarea
-  id="observacoes"
-  placeholder="Informações adicionais / Additional information">
+  id="observacoes">
 </textarea>
 
 
@@ -455,16 +448,13 @@ Observações / Observations
   type="hidden"
   id="latitude">
 
-
 <input
   type="hidden"
   id="longitude">
 
-
 <input
   type="hidden"
   id="gpsAcc">
-
 
 
 <div
@@ -479,7 +469,8 @@ A obter localização...
 
 <button
   id="sendBtn"
-  type="submit">
+  type="submit"
+  disabled>
 
 Guardar registo / Save entry
 
@@ -490,7 +481,10 @@ Guardar registo / Save entry
 
 
 
-<p id="mensagem"></p>
+<p
+  id="mensagem"
+  class="center">
+</p>
 
 
 
@@ -499,20 +493,16 @@ Guardar registo / Save entry
   class="hidden">
 
 
-<div class="code-wrap">
-
 <div
   id="bigCode"
   class="code-box">
 </div>
 
-</div>
 
-
-<div
+<p
   id="syncStatus"
-  class="code-status">
-</div>
+  class="center">
+</p>
 
 
 <button
@@ -528,11 +518,10 @@ Guardar registo / Save entry
 
 
 
-<div
+<p
   id="queueInfo"
-  class="queue">
-</div>
-
+  class="center">
+</p>
 
 
 <button
@@ -545,15 +534,15 @@ Guardar registo / Save entry
 
 
 
-<div class="device-note">
+<p class="small center">
 
-⚠️ Não utilize modo privado/incógnito durante a campanha.
+⚠️ Não utilize o modo privado/incógnito durante a campanha.
 
 <br>
 
 Do not use Private/Incognito mode during the campaign.
 
-</div>
+</p>
 
 
 
@@ -569,27 +558,329 @@ Do not use Private/Incognito mode during the campaign.
 
 <script>
 
+/*************************************************
+ SERVIDOR
+*************************************************/
 
 const scriptURL =
 "https://script.google.com/macros/s/AKfycbwNjzfFDczI-TWkRUhv_z_lcjVZ0xZF4LyPGYqW1NE8YRtmouq8gxsaltCrTX-CmXMC/exec";
 
 
+/*************************************************
+ STORAGE
+*************************************************/
+
 const QUEUE_KEY =
-"cagarros_pendentes_v1";
+"cagarros_pendentes_v2";
 
 const NAME_KEY =
 "cagarros_nome_voluntario_v1";
 
-const DEVICE_KEY =
-"cagarros_device_id_v1";
+const UUID_KEY =
+"cagarros_device_uuid_v1";
+
+const DEVICE_ID_KEY =
+"cagarros_device_id_server_v1";
 
 const COUNTER_KEY =
-"cagarros_counter_v1";
+"cagarros_counter_v2";
 
 
 const SAFE_ALPHABET =
 "ABCDEFGHJKMNPQRTUVWXYZ2346789";
 
+
+/*************************************************
+ SERVICE WORKER
+*************************************************/
+
+async function registerServiceWorker() {
+
+  if (
+    !("serviceWorker" in navigator)
+  ) {
+
+    return false;
+
+  }
+
+
+  try {
+
+    await navigator
+      .serviceWorker
+      .register(
+        "./service-worker.js"
+      );
+
+
+    await navigator
+      .serviceWorker
+      .ready;
+
+
+    return true;
+
+  } catch (_) {
+
+    return false;
+
+  }
+
+}
+
+
+/*************************************************
+ UUID INTERNO
+*************************************************/
+
+function getDeviceUUID() {
+
+  let uuid =
+    localStorage.getItem(
+      UUID_KEY
+    );
+
+
+  if (uuid) {
+
+    return uuid;
+
+  }
+
+
+  if (
+    crypto.randomUUID
+  ) {
+
+    uuid =
+      crypto.randomUUID();
+
+  } else {
+
+    const values =
+      new Uint32Array(4);
+
+
+    crypto.getRandomValues(
+      values
+    );
+
+
+    uuid =
+      Array
+        .from(values)
+        .map(
+          n =>
+            n.toString(16)
+        )
+        .join("-");
+
+  }
+
+
+  localStorage.setItem(
+    UUID_KEY,
+    uuid
+  );
+
+
+  return uuid;
+
+}
+
+
+/*************************************************
+ REGISTAR DISPOSITIVO
+*************************************************/
+
+async function ensureDeviceRegistration() {
+
+  const status =
+    document.getElementById(
+      "deviceStatus"
+    );
+
+
+  let deviceId =
+    localStorage.getItem(
+      DEVICE_ID_KEY
+    );
+
+
+  const uuid =
+    getDeviceUUID();
+
+
+  const swReady =
+    await registerServiceWorker();
+
+
+  /*********************************************
+   JÁ ESTÁ REGISTADO
+  *********************************************/
+
+  if (
+    deviceId &&
+    deviceId.length === 3
+  ) {
+
+    status.className =
+      "status ready";
+
+
+    status.innerHTML =
+      "✅ Telemóvel preparado para utilização offline<br>" +
+      "✅ Phone ready for offline use";
+
+
+    document
+      .getElementById(
+        "sendBtn"
+      )
+      .disabled =
+      false;
+
+
+    return true;
+
+  }
+
+
+  /*********************************************
+   PRIMEIRA VEZ SEM REDE
+  *********************************************/
+
+  if (
+    !navigator.onLine
+  ) {
+
+    status.className =
+      "status offline";
+
+
+    status.innerHTML =
+      "⚠️ O primeiro acesso necessita de internet.<br>" +
+      "⚠️ First access requires an internet connection.";
+
+
+    return false;
+
+  }
+
+
+  /*********************************************
+   PEDIR ID AO SERVIDOR
+  *********************************************/
+
+  status.className =
+    "status waiting";
+
+
+  status.innerHTML =
+    "A preparar este telemóvel...<br>" +
+    "Preparing this phone...";
+
+
+  try {
+
+    const url =
+      scriptURL +
+      "?action=registerDevice&uuid=" +
+      encodeURIComponent(
+        uuid
+      );
+
+
+    const response =
+      await fetch(
+        url,
+        {
+          cache:
+            "no-store"
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !data.ok ||
+      !data.deviceId
+    ) {
+
+      throw new Error(
+        "ID não recebido"
+      );
+
+    }
+
+
+    localStorage.setItem(
+      DEVICE_ID_KEY,
+      data.deviceId
+    );
+
+
+    if (!swReady) {
+
+      status.className =
+        "status waiting";
+
+
+      status.innerHTML =
+        "⚠️ ID atribuído, mas a preparação offline não ficou concluída.<br>" +
+        "⚠️ Device ID assigned, but offline setup was not completed.";
+
+
+      return false;
+
+    }
+
+
+    status.className =
+      "status ready";
+
+
+    status.innerHTML =
+      "✅ Telemóvel preparado para utilização offline<br>" +
+      "✅ Phone ready for offline use";
+
+
+    document
+      .getElementById(
+        "sendBtn"
+      )
+      .disabled =
+      false;
+
+
+    return true;
+
+
+  } catch (_) {
+
+    status.className =
+      "status offline";
+
+
+    status.innerHTML =
+      "⚠️ Não foi possível preparar este telemóvel. Verifique a ligação à internet.<br>" +
+      "⚠️ This phone could not be prepared. Check the internet connection.";
+
+
+    return false;
+
+  }
+
+}
+
+
+/*************************************************
+ FILA LOCAL
+*************************************************/
 
 function getQueue() {
 
@@ -619,15 +910,19 @@ function setQueue(queue) {
     )
   );
 
+
   updateQueueUI();
 
 }
 
 
+/*************************************************
+ SUBMISSION ID
+*************************************************/
+
 function generateSubmissionId() {
 
   if (
-    window.crypto &&
     crypto.randomUUID
   ) {
 
@@ -636,17 +931,15 @@ function generateSubmissionId() {
   }
 
 
-  const array =
+  const a =
     new Uint32Array(4);
 
 
-  crypto.getRandomValues(
-    array
-  );
+  crypto.getRandomValues(a);
 
 
   return Array
-    .from(array)
+    .from(a)
     .map(
       n =>
         n.toString(16)
@@ -656,57 +949,13 @@ function generateSubmissionId() {
 }
 
 
-function getDeviceId() {
+/*************************************************
+ DIA DE CAMPANHA
 
-  let id =
-    localStorage.getItem(
-      DEVICE_KEY
-    );
+ muda às 06:00 nos Açores
+*************************************************/
 
-
-  if (
-    id &&
-    id.length === 2
-  ) {
-
-    return id;
-
-  }
-
-
-  const values =
-    new Uint32Array(2);
-
-
-  crypto.getRandomValues(
-    values
-  );
-
-
-  id =
-    SAFE_ALPHABET[
-      values[0] %
-      SAFE_ALPHABET.length
-    ]
-    +
-    SAFE_ALPHABET[
-      values[1] %
-      SAFE_ALPHABET.length
-    ];
-
-
-  localStorage.setItem(
-    DEVICE_KEY,
-    id
-  );
-
-
-  return id;
-
-}
-
-
-function getAzoresCountingDate(
+function getCampaignDate(
   date = new Date()
 ) {
 
@@ -740,40 +989,37 @@ function getAzoresCountingDate(
     );
 
 
-  const values = {};
+  const p = {};
 
 
   parts.forEach(
-    part => {
+    item => {
 
-      values[
-        part.type
+      p[
+        item.type
       ] =
-        part.value;
+        item.value;
 
     }
   );
 
 
-  const countingDate =
+  const d =
     new Date(
       Date.UTC(
-        Number(values.year),
-        Number(values.month) - 1,
-        Number(values.day)
+        Number(p.year),
+        Number(p.month) - 1,
+        Number(p.day)
       )
     );
 
 
   if (
-    Number(
-      values.hour
-    ) < 6
+    Number(p.hour) < 6
   ) {
 
-    countingDate.setUTCDate(
-      countingDate.getUTCDate()
-      - 1
+    d.setUTCDate(
+      d.getUTCDate() - 1
     );
 
   }
@@ -781,9 +1027,8 @@ function getAzoresCountingDate(
 
   const dd =
     String(
-      countingDate.getUTCDate()
-    )
-    .padStart(
+      d.getUTCDate()
+    ).padStart(
       2,
       "0"
     );
@@ -791,10 +1036,8 @@ function getAzoresCountingDate(
 
   const mm =
     String(
-      countingDate.getUTCMonth()
-      + 1
-    )
-    .padStart(
+      d.getUTCMonth() + 1
+    ).padStart(
       2,
       "0"
     );
@@ -802,7 +1045,7 @@ function getAzoresCountingDate(
 
   const yyyy =
     String(
-      countingDate.getUTCFullYear()
+      d.getUTCFullYear()
     );
 
 
@@ -819,18 +1062,19 @@ function getAzoresCountingDate(
 }
 
 
+/*************************************************
+ CONTADOR
+*************************************************/
+
 function encodeCounter(number) {
 
   const base =
     SAFE_ALPHABET.length;
 
 
-  const max =
-    base * base;
-
-
   if (
-    number >= max
+    number >=
+    base * base
   ) {
 
     throw new Error(
@@ -840,20 +1084,22 @@ function encodeCounter(number) {
   }
 
 
-  const first =
-    Math.floor(
-      number / base
-    );
-
-
-  const second =
-    number % base;
-
-
   return (
-    SAFE_ALPHABET[first]
+
+    SAFE_ALPHABET[
+      Math.floor(
+        number /
+        base
+      )
+    ]
+
     +
-    SAFE_ALPHABET[second]
+
+    SAFE_ALPHABET[
+      number %
+      base
+    ]
+
   );
 
 }
@@ -862,32 +1108,32 @@ function encodeCounter(number) {
 function getNextCounter() {
 
   const date =
-    getAzoresCountingDate();
+    getCampaignDate();
 
 
-  let stored =
+  let saved =
     null;
 
 
   try {
 
-    stored =
+    saved =
       JSON.parse(
         localStorage.getItem(
           COUNTER_KEY
-        ) || "null"
+        )
       );
 
   } catch (_) {}
 
 
   if (
-    !stored ||
-    stored.date !==
+    !saved ||
+    saved.date !==
       date.key
   ) {
 
-    stored = {
+    saved = {
 
       date:
         date.key,
@@ -901,17 +1147,17 @@ function getNextCounter() {
 
 
   const current =
-    stored.value;
+    saved.value;
 
 
-  stored.value =
+  saved.value =
     current + 1;
 
 
   localStorage.setItem(
     COUNTER_KEY,
     JSON.stringify(
-      stored
+      saved
     )
   );
 
@@ -921,71 +1167,60 @@ function getNextCounter() {
 }
 
 
+/*************************************************
+ CÓDIGO
+
+ DDMM + ID3 + CONTADOR2
+
+ exemplo:
+ 0210-AABAC
+*************************************************/
+
 function generateCode() {
 
-  const date =
-    getAzoresCountingDate();
+  const deviceId =
+    localStorage.getItem(
+      DEVICE_ID_KEY
+    );
 
 
-  return (
-    date.display
-    +
-    "-"
-    +
-    getDeviceId()
-    +
-    encodeCounter(
-      getNextCounter()
-    )
-  );
-
-}
-
-
-function generateUniqueLocalCode() {
-
-  let attempts =
-    0;
-
-
-  while (
-    attempts < 20
+  if (
+    !deviceId ||
+    deviceId.length !== 3
   ) {
 
-    const code =
-      generateCode();
-
-
-    const exists =
-      getQueue()
-        .some(
-          item =>
-            item.payload &&
-            item.payload.codigo ===
-              code
-        );
-
-
-    if (!exists) {
-
-      return code;
-
-    }
-
-
-    attempts++;
+    throw new Error(
+      "Dispositivo não preparado."
+    );
 
   }
 
 
-  throw new Error(
-    "Erro a gerar código."
+  const date =
+    getCampaignDate();
+
+
+  const counter =
+    encodeCounter(
+      getNextCounter()
+    );
+
+
+  return (
+    date.display +
+    "-" +
+    deviceId +
+    counter
   );
 
 }
 
 
-function loadVolunteerName() {
+/*************************************************
+ NOME
+*************************************************/
+
+function loadName() {
 
   const saved =
     localStorage.getItem(
@@ -1007,7 +1242,7 @@ function loadVolunteerName() {
 }
 
 
-function saveVolunteerName() {
+function saveName() {
 
   const name =
     document
@@ -1030,13 +1265,16 @@ function saveVolunteerName() {
 }
 
 
+/*************************************************
+ GPS
+*************************************************/
+
 function startGPS() {
 
   const hint =
-    document
-      .getElementById(
-        "gpsHint"
-      );
+    document.getElementById(
+      "gpsHint"
+    );
 
 
   if (
@@ -1044,7 +1282,7 @@ function startGPS() {
   ) {
 
     hint.textContent =
-      "Localização não disponível. Pode registar na mesma.";
+      "Localização não disponível / Location unavailable";
 
     return;
 
@@ -1052,20 +1290,21 @@ function startGPS() {
 
 
   hint.textContent =
-    "A obter localização...";
+    "A obter localização... / Getting location...";
 
 
-  navigator.geolocation
+  navigator
+    .geolocation
     .getCurrentPosition(
 
-      position => {
+      pos => {
 
         document
           .getElementById(
             "latitude"
           )
           .value =
-          position.coords.latitude;
+          pos.coords.latitude;
 
 
         document
@@ -1073,7 +1312,7 @@ function startGPS() {
             "longitude"
           )
           .value =
-          position.coords.longitude;
+          pos.coords.longitude;
 
 
         document
@@ -1082,19 +1321,15 @@ function startGPS() {
           )
           .value =
           Math.round(
-            position.coords.accuracy ||
-            0
+            pos.coords.accuracy || 0
           );
 
 
         hint.textContent =
-          "Precisão aproximada: ±"
-          +
+          "Precisão aproximada: ±" +
           Math.round(
-            position.coords.accuracy ||
-            0
-          )
-          +
+            pos.coords.accuracy || 0
+          ) +
           " m";
 
       },
@@ -1126,33 +1361,37 @@ function startGPS() {
 }
 
 
-const netStatus =
-  document.getElementById(
-    "netStatus"
-  );
-
+/*************************************************
+ REDE
+*************************************************/
 
 function updateNetworkUI() {
+
+  const el =
+    document.getElementById(
+      "networkStatus"
+    );
+
 
   if (
     navigator.onLine
   ) {
 
-    netStatus.className =
-      "statusbar online";
+    el.className =
+      "status ready";
 
 
-    netStatus.textContent =
+    el.innerHTML =
       "Ligação ativa / Online";
 
   } else {
 
-    netStatus.className =
-      "statusbar offline";
+    el.className =
+      "status offline";
 
 
-    netStatus.textContent =
-      "Sem rede - registos guardados neste dispositivo / Offline";
+    el.innerHTML =
+      "Sem rede / Offline";
 
   }
 
@@ -1161,9 +1400,11 @@ function updateNetworkUI() {
 
 window.addEventListener(
   "online",
-  () => {
+  async () => {
 
     updateNetworkUI();
+
+    await ensureDeviceRegistration();
 
     flushPending();
 
@@ -1177,58 +1418,9 @@ window.addEventListener(
 );
 
 
-function showCode(
-  codigo,
-  synced
-) {
-
-  document
-    .getElementById(
-      "bigCode"
-    )
-    .textContent =
-    codigo;
-
-
-  document
-    .getElementById(
-      "codeArea"
-    )
-    .classList
-    .remove(
-      "hidden"
-    );
-
-
-  const status =
-    document
-      .getElementById(
-        "syncStatus"
-      );
-
-
-  if (synced) {
-
-    status.className =
-      "code-status synced";
-
-
-    status.textContent =
-      "✅ Sincronizado / Synced";
-
-  } else {
-
-    status.className =
-      "code-status pending";
-
-
-    status.textContent =
-      "📦 Pendente de sincronização / Pending sync";
-
-  }
-
-}
-
+/*************************************************
+ SUBMETER
+*************************************************/
 
 document
   .getElementById(
@@ -1256,22 +1448,73 @@ document
       }
 
 
-      const button =
+      const deviceId =
+        localStorage.getItem(
+          DEVICE_ID_KEY
+        );
+
+
+      const deviceUuid =
+        localStorage.getItem(
+          UUID_KEY
+        );
+
+
+      if (
+        !deviceId ||
+        !deviceUuid
+      ) {
+
         document
           .getElementById(
-            "sendBtn"
-          );
+            "mensagem"
+          )
+          .textContent =
+          "⚠️ Este telemóvel ainda não está preparado.";
+
+        return;
+
+      }
+
+
+      const button =
+        document.getElementById(
+          "sendBtn"
+        );
 
 
       button.disabled =
         true;
 
 
-      saveVolunteerName();
+      saveName();
 
 
-      const codigo =
-        generateUniqueLocalCode();
+      let codigo;
+
+
+      try {
+
+        codigo =
+          generateCode();
+
+      } catch (err) {
+
+        document
+          .getElementById(
+            "mensagem"
+          )
+          .textContent =
+          "⚠️ " +
+          err.message;
+
+
+        button.disabled =
+          false;
+
+        return;
+
+      }
 
 
       const submissionId =
@@ -1304,13 +1547,6 @@ document
           document
             .getElementById(
               "local"
-            )
-            .value,
-
-        nevoeiroObservado:
-          document
-            .getElementById(
-              "nevoeiroObservado"
             )
             .value,
 
@@ -1349,7 +1585,13 @@ document
           submissionId,
 
         recordedAt:
-          recordedAt
+          recordedAt,
+
+        deviceUuid:
+          deviceUuid,
+
+        deviceId:
+          deviceId
 
       };
 
@@ -1361,10 +1603,7 @@ document
       queue.push({
 
         payload:
-          payload,
-
-        savedAt:
-          recordedAt
+          payload
 
       });
 
@@ -1388,7 +1627,7 @@ document
         "✅ Registo guardado / Entry saved";
 
 
-      const savedName =
+      const name =
         localStorage.getItem(
           NAME_KEY
         ) || "";
@@ -1402,7 +1641,7 @@ document
           "nome"
         )
         .value =
-        savedName;
+        name;
 
 
       if (
@@ -1426,21 +1665,61 @@ document
   );
 
 
+/*************************************************
+ MOSTRAR CÓDIGO
+*************************************************/
+
+function showCode(
+  codigo,
+  synced
+) {
+
+  document
+    .getElementById(
+      "codeArea"
+    )
+    .classList
+    .remove(
+      "hidden"
+    );
+
+
+  document
+    .getElementById(
+      "bigCode"
+    )
+    .textContent =
+    codigo;
+
+
+  document
+    .getElementById(
+      "syncStatus"
+    )
+    .textContent =
+    synced
+      ? "✅ Sincronizado / Synced"
+      : "📦 Pendente / Pending sync";
+
+}
+
+
+/*************************************************
+ SINCRONIZAR
+*************************************************/
+
 async function syncSubmission(
   submissionId
 ) {
 
-  const queue =
-    getQueue();
-
-
   const item =
-    queue.find(
-      q =>
-        q.payload &&
-        q.payload.submissionId ===
-          submissionId
-    );
+    getQueue()
+      .find(
+        q =>
+          q.payload &&
+          q.payload.submissionId ===
+            submissionId
+      );
 
 
   if (!item) {
@@ -1455,7 +1734,8 @@ async function syncSubmission(
         scriptURL,
         {
 
-          method: "POST",
+          method:
+            "POST",
 
           body:
             JSON.stringify(
@@ -1505,10 +1785,15 @@ async function syncSubmission(
 
     }
 
+
   } catch (_) {}
 
 }
 
+
+/*************************************************
+ TODOS OS PENDENTES
+*************************************************/
 
 async function flushPending() {
 
@@ -1543,6 +1828,10 @@ async function flushPending() {
 }
 
 
+/*************************************************
+ FILA UI
+*************************************************/
+
 function updateQueueUI() {
 
   const total =
@@ -1550,17 +1839,15 @@ function updateQueueUI() {
 
 
   const info =
-    document
-      .getElementById(
-        "queueInfo"
-      );
+    document.getElementById(
+      "queueInfo"
+    );
 
 
   const button =
-    document
-      .getElementById(
-        "flushBtn"
-      );
+    document.getElementById(
+      "flushBtn"
+    );
 
 
   if (
@@ -1568,10 +1855,8 @@ function updateQueueUI() {
   ) {
 
     info.textContent =
-      "📦 "
-      +
-      total
-      +
+      "📦 " +
+      total +
       " registo(s) por sincronizar";
 
 
@@ -1607,6 +1892,10 @@ document
     flushPending
   );
 
+
+/*************************************************
+ COPIAR
+*************************************************/
 
 document
   .getElementById(
@@ -1649,7 +1938,7 @@ document
               "📋 Copiar código / Copy code";
 
           },
-          1500
+          1200
         );
 
       } catch (_) {}
@@ -1658,27 +1947,38 @@ document
   );
 
 
-getDeviceId();
+/*************************************************
+ ARRANQUE
+*************************************************/
 
-loadVolunteerName();
+async function init() {
 
-updateNetworkUI();
+  loadName();
 
-updateQueueUI();
+  updateNetworkUI();
 
-startGPS();
+  updateQueueUI();
+
+  startGPS();
+
+  await ensureDeviceRegistration();
 
 
-if (
-  navigator.onLine
-) {
+  if (
+    navigator.onLine
+  ) {
 
-  flushPending();
+    flushPending();
+
+  }
 
 }
 
+
+init();
+
 </script>
 
-</body>
 
+</body>
 </html>
