@@ -52,12 +52,14 @@ body {
 
 }
 
+
 h2 {
 
   text-align:
     center;
 
 }
+
 
 .subtitle {
 
@@ -68,6 +70,7 @@ h2 {
     #dbe1ff;
 
 }
+
 
 .status {
 
@@ -88,6 +91,7 @@ h2 {
 
 }
 
+
 .ready {
 
   background:
@@ -97,6 +101,7 @@ h2 {
     #1e7e34;
 
 }
+
 
 .waiting {
 
@@ -108,6 +113,7 @@ h2 {
 
 }
 
+
 .offline {
 
   background:
@@ -117,6 +123,7 @@ h2 {
     #a4252c;
 
 }
+
 
 label {
 
@@ -130,6 +137,7 @@ label {
     bold;
 
 }
+
 
 input,
 select,
@@ -156,6 +164,7 @@ button {
 
 }
 
+
 input,
 select,
 textarea {
@@ -171,12 +180,14 @@ textarea {
 
 }
 
+
 textarea {
 
   min-height:
     75px;
 
 }
+
 
 button {
 
@@ -194,6 +205,7 @@ button {
 
 }
 
+
 button:disabled {
 
   background:
@@ -201,12 +213,14 @@ button:disabled {
 
 }
 
+
 .hidden {
 
   display:
     none !important;
 
 }
+
 
 .hint {
 
@@ -220,6 +234,7 @@ button:disabled {
     #ddd;
 
 }
+
 
 .code-box {
 
@@ -248,15 +263,19 @@ button:disabled {
     monospace;
 
   font-size:
-    2.1rem;
+    2.3rem;
 
   font-weight:
     bold;
+
+  letter-spacing:
+    2px;
 
   user-select:
     all;
 
 }
+
 
 .center {
 
@@ -265,12 +284,14 @@ button:disabled {
 
 }
 
+
 .secondary {
 
   background:
     #0d6efd;
 
 }
+
 
 .copy {
 
@@ -282,6 +303,7 @@ button:disabled {
 
 }
 
+
 .small {
 
   font-size:
@@ -292,6 +314,7 @@ button:disabled {
 
 }
 
+
 footer {
 
   margin-top:
@@ -301,6 +324,7 @@ footer {
     center;
 
 }
+
 
 footer img {
 
@@ -366,7 +390,6 @@ Your name is remembered on this device.
 </p>
 
 
-
 <label for="estado">
 Estado / Status
 </label>
@@ -376,28 +399,33 @@ Estado / Status
   id="estado"
   required>
 
+
 <option value="">
 -- Escolher / Choose --
 </option>
+
 
 <option value="Vivo / Alive">
 Vivo / Alive
 </option>
 
+
 <option value="Morto / Dead">
 Morto / Dead
 </option>
+
 
 <option value="Ferido / Injured">
 Ferido / Injured
 </option>
 
+
 <option value="Oleado / Oiled">
 Oleado / Oiled
 </option>
 
-</select>
 
+</select>
 
 
 <label for="local">
@@ -409,28 +437,33 @@ Local / Location
   id="local"
   required>
 
+
 <option value="">
 -- Selecionar / Select --
 </option>
+
 
 <option value="Sem localização / No location">
 Sem localização / No location
 </option>
 
+
 <option value="Hotel de Cagarro / Shearwater Hotel">
 Hotel de Cagarro / Shearwater Hotel
 </option>
+
 
 <option value="Fora da marina/Porto / Outside marina/Port">
 Fora da marina/Porto / Outside marina/Port
 </option>
 
+
 <option value="Marina/Porto / Marina/Port">
 Marina/Porto / Marina/Port
 </option>
 
-</select>
 
+</select>
 
 
 <label for="observacoes">
@@ -443,14 +476,15 @@ Observações / Observations
 </textarea>
 
 
-
 <input
   type="hidden"
   id="latitude">
 
+
 <input
   type="hidden"
   id="longitude">
+
 
 <input
   type="hidden"
@@ -461,10 +495,9 @@ Observações / Observations
   id="gpsHint"
   class="hint">
 
-A obter localização...
+A obter localização... / Getting location...
 
 </div>
-
 
 
 <button
@@ -480,12 +513,10 @@ Guardar registo / Save entry
 </form>
 
 
-
 <p
   id="mensagem"
   class="center">
 </p>
-
 
 
 <div
@@ -517,7 +548,6 @@ Guardar registo / Save entry
 </div>
 
 
-
 <p
   id="queueInfo"
   class="center">
@@ -533,17 +563,15 @@ Guardar registo / Save entry
 </button>
 
 
-
 <p class="small center">
 
 ⚠️ Não utilize o modo privado/incógnito durante a campanha.
 
 <br>
 
-Do not use Private/Incognito mode during the campaign.
+⚠️ Do not use Private/Incognito mode during the campaign.
 
 </p>
-
 
 
 <footer>
@@ -553,7 +581,6 @@ Do not use Private/Incognito mode during the campaign.
   alt="SPEA">
 
 </footer>
-
 
 
 <script>
@@ -573,21 +600,27 @@ const scriptURL =
 const QUEUE_KEY =
 "cagarros_pendentes_v2";
 
+
 const NAME_KEY =
 "cagarros_nome_voluntario_v1";
+
 
 const UUID_KEY =
 "cagarros_device_uuid_v1";
 
+
 const DEVICE_ID_KEY =
 "cagarros_device_id_server_v1";
 
+
+/*
+  NOVA chave.
+
+  É um contador permanente.
+  Já não depende da data.
+*/
 const COUNTER_KEY =
-"cagarros_counter_v2";
-
-
-const SAFE_ALPHABET =
-"ABCDEFGHJKMNPQRTUVWXYZ2346789";
+"cagarros_counter_permanent_v1";
 
 
 /*************************************************
@@ -597,7 +630,10 @@ const SAFE_ALPHABET =
 async function registerServiceWorker() {
 
   if (
-    !("serviceWorker" in navigator)
+    !(
+      "serviceWorker"
+      in navigator
+    )
   ) {
 
     return false;
@@ -620,6 +656,7 @@ async function registerServiceWorker() {
 
 
     return true;
+
 
   } catch (_) {
 
@@ -650,6 +687,7 @@ function getDeviceUUID() {
 
 
   if (
+    window.crypto &&
     crypto.randomUUID
   ) {
 
@@ -691,7 +729,78 @@ function getDeviceUUID() {
 
 
 /*************************************************
- REGISTAR DISPOSITIVO
+ SINCRONIZAR CONTADOR LOCAL COM SERVIDOR
+
+ O servidor diz qual deveria ser
+ o próximo número.
+
+ Nunca fazemos o contador andar para trás.
+*************************************************/
+
+function reconcileCounter(
+  nextNumber
+) {
+
+  const serverNext =
+    Number(
+      nextNumber
+    );
+
+
+  if (
+    !Number.isFinite(
+      serverNext
+    ) ||
+    serverNext < 1
+  ) {
+
+    return;
+
+  }
+
+
+  let localLast =
+    Number(
+      localStorage.getItem(
+        COUNTER_KEY
+      ) || "0"
+    );
+
+
+  if (
+    !Number.isFinite(
+      localLast
+    ) ||
+    localLast < 0
+  ) {
+
+    localLast =
+      0;
+
+  }
+
+
+  const serverLast =
+    serverNext - 1;
+
+
+  if (
+    serverLast >
+    localLast
+  ) {
+
+    localStorage.setItem(
+      COUNTER_KEY,
+      String(serverLast)
+    );
+
+  }
+
+}
+
+
+/*************************************************
+ PREPARAR / VERIFICAR DISPOSITIVO
 *************************************************/
 
 async function ensureDeviceRegistration() {
@@ -702,7 +811,7 @@ async function ensureDeviceRegistration() {
     );
 
 
-  let deviceId =
+  let localDeviceId =
     localStorage.getItem(
       DEVICE_ID_KEY
     );
@@ -717,43 +826,41 @@ async function ensureDeviceRegistration() {
 
 
   /*********************************************
-   JÁ ESTÁ REGISTADO
-  *********************************************/
+   SEM REDE
 
-  if (
-    deviceId &&
-    deviceId.length === 3
-  ) {
-
-    status.className =
-      "status ready";
-
-
-    status.innerHTML =
-      "✅ Telemóvel preparado para utilização offline<br>" +
-      "✅ Phone ready for offline use";
-
-
-    document
-      .getElementById(
-        "sendBtn"
-      )
-      .disabled =
-      false;
-
-
-    return true;
-
-  }
-
-
-  /*********************************************
-   PRIMEIRA VEZ SEM REDE
+   Se já temos ID, podemos trabalhar.
   *********************************************/
 
   if (
     !navigator.onLine
   ) {
+
+    if (
+      localDeviceId &&
+      localDeviceId.length === 3
+    ) {
+
+      status.className =
+        "status ready";
+
+
+      status.innerHTML =
+        "✅ Telemóvel preparado para utilização offline<br>" +
+        "✅ Phone ready for offline use";
+
+
+      document
+        .getElementById(
+          "sendBtn"
+        )
+        .disabled =
+        false;
+
+
+      return true;
+
+    }
+
 
     status.className =
       "status offline";
@@ -764,13 +871,24 @@ async function ensureDeviceRegistration() {
       "⚠️ First access requires an internet connection.";
 
 
+    document
+      .getElementById(
+        "sendBtn"
+      )
+      .disabled =
+      true;
+
+
     return false;
 
   }
 
 
   /*********************************************
-   PEDIR ID AO SERVIDOR
+   COM REDE
+
+   Mesmo que já tenha ID, verificamos o servidor
+   e sincronizamos o contador.
   *********************************************/
 
   status.className =
@@ -789,7 +907,9 @@ async function ensureDeviceRegistration() {
       "?action=registerDevice&uuid=" +
       encodeURIComponent(
         uuid
-      );
+      ) +
+      "&t=" +
+      Date.now();
 
 
     const response =
@@ -812,7 +932,7 @@ async function ensureDeviceRegistration() {
     ) {
 
       throw new Error(
-        "ID não recebido"
+        "Device registration failed"
       );
 
     }
@@ -824,18 +944,28 @@ async function ensureDeviceRegistration() {
     );
 
 
-    if (!swReady) {
-
-      status.className =
-        "status waiting";
+    localDeviceId =
+      data.deviceId;
 
 
-      status.innerHTML =
-        "⚠️ ID atribuído, mas a preparação offline não ficou concluída.<br>" +
-        "⚠️ Device ID assigned, but offline setup was not completed.";
+    reconcileCounter(
+      data.nextNumber
+    );
 
 
-      return false;
+    /*
+      Se já existe ID local mas o service worker
+      tem um problema momentâneo, não bloqueamos
+      um telemóvel que já estava preparado.
+    */
+    if (
+      !swReady &&
+      !localDeviceId
+    ) {
+
+      throw new Error(
+        "Offline preparation failed"
+      );
 
     }
 
@@ -862,6 +992,37 @@ async function ensureDeviceRegistration() {
 
   } catch (_) {
 
+    /*
+      Se este telemóvel já tinha um ID válido,
+      continua operacional.
+    */
+    if (
+      localDeviceId &&
+      localDeviceId.length === 3
+    ) {
+
+      status.className =
+        "status ready";
+
+
+      status.innerHTML =
+        "✅ Telemóvel preparado para utilização offline<br>" +
+        "✅ Phone ready for offline use";
+
+
+      document
+        .getElementById(
+          "sendBtn"
+        )
+        .disabled =
+        false;
+
+
+      return true;
+
+    }
+
+
     status.className =
       "status offline";
 
@@ -869,6 +1030,14 @@ async function ensureDeviceRegistration() {
     status.innerHTML =
       "⚠️ Não foi possível preparar este telemóvel. Verifique a ligação à internet.<br>" +
       "⚠️ This phone could not be prepared. Check the internet connection.";
+
+
+    document
+      .getElementById(
+        "sendBtn"
+      )
+      .disabled =
+      true;
 
 
     return false;
@@ -923,6 +1092,7 @@ function setQueue(queue) {
 function generateSubmissionId() {
 
   if (
+    window.crypto &&
     crypto.randomUUID
   ) {
 
@@ -931,15 +1101,17 @@ function generateSubmissionId() {
   }
 
 
-  const a =
+  const values =
     new Uint32Array(4);
 
 
-  crypto.getRandomValues(a);
+  crypto.getRandomValues(
+    values
+  );
 
 
   return Array
-    .from(a)
+    .from(values)
     .map(
       n =>
         n.toString(16)
@@ -950,230 +1122,90 @@ function generateSubmissionId() {
 
 
 /*************************************************
- DIA DE CAMPANHA
+ PRÓXIMO NÚMERO DO VOLUNTÁRIO
 
- muda às 06:00 nos Açores
+ Não reinicia com a data.
+
+ 1 -> 01
+ 2 -> 02
+ ...
+ 8 -> 08
+ 9 -> 09
+ 10 -> 10
+ ...
+ 100 -> 100
 *************************************************/
 
-function getCampaignDate(
-  date = new Date()
-) {
+function getNextPermanentNumber() {
 
-  const parts =
-    new Intl.DateTimeFormat(
-      "en-GB",
-      {
-
-        timeZone:
-          "Atlantic/Azores",
-
-        year:
-          "numeric",
-
-        month:
-          "2-digit",
-
-        day:
-          "2-digit",
-
-        hour:
-          "2-digit",
-
-        hourCycle:
-          "h23"
-
-      }
-    )
-    .formatToParts(
-      date
-    );
-
-
-  const p = {};
-
-
-  parts.forEach(
-    item => {
-
-      p[
-        item.type
-      ] =
-        item.value;
-
-    }
-  );
-
-
-  const d =
-    new Date(
-      Date.UTC(
-        Number(p.year),
-        Number(p.month) - 1,
-        Number(p.day)
-      )
+  let last =
+    Number(
+      localStorage.getItem(
+        COUNTER_KEY
+      ) || "0"
     );
 
 
   if (
-    Number(p.hour) < 6
+    !Number.isFinite(last) ||
+    last < 0
   ) {
 
-    d.setUTCDate(
-      d.getUTCDate() - 1
-    );
+    last =
+      0;
 
   }
 
 
-  const dd =
-    String(
-      d.getUTCDate()
-    ).padStart(
-      2,
-      "0"
-    );
+  const next =
+    Math.floor(last) + 1;
 
 
-  const mm =
-    String(
-      d.getUTCMonth() + 1
-    ).padStart(
-      2,
-      "0"
-    );
-
-
-  const yyyy =
-    String(
-      d.getUTCFullYear()
-    );
-
-
-  return {
-
-    display:
-      dd + mm,
-
-    key:
-      yyyy + mm + dd
-
-  };
-
-}
-
-
-/*************************************************
- CONTADOR
-*************************************************/
-
-function encodeCounter(number) {
-
-  const base =
-    SAFE_ALPHABET.length;
-
-
-  if (
-    number >=
-    base * base
-  ) {
-
-    throw new Error(
-      "Limite diário atingido."
-    );
-
-  }
-
-
-  return (
-
-    SAFE_ALPHABET[
-      Math.floor(
-        number /
-        base
-      )
-    ]
-
-    +
-
-    SAFE_ALPHABET[
-      number %
-      base
-    ]
-
-  );
-
-}
-
-
-function getNextCounter() {
-
-  const date =
-    getCampaignDate();
-
-
-  let saved =
-    null;
-
-
-  try {
-
-    saved =
-      JSON.parse(
-        localStorage.getItem(
-          COUNTER_KEY
-        )
-      );
-
-  } catch (_) {}
-
-
-  if (
-    !saved ||
-    saved.date !==
-      date.key
-  ) {
-
-    saved = {
-
-      date:
-        date.key,
-
-      value:
-        0
-
-    };
-
-  }
-
-
-  const current =
-    saved.value;
-
-
-  saved.value =
-    current + 1;
-
-
+  /*
+    Guardamos ANTES de enviar.
+    Assim nunca reutilizamos este número.
+  */
   localStorage.setItem(
     COUNTER_KEY,
-    JSON.stringify(
-      saved
-    )
+    String(next)
   );
 
 
-  return current;
+  return next;
 
 }
 
 
 /*************************************************
- CÓDIGO
+ FORMATAR NÚMERO
 
- DDMM + ID3 + CONTADOR2
+ mínimo 2 algarismos
+*************************************************/
 
- exemplo:
- 0210-AABAC
+function formatVolunteerNumber(
+  number
+) {
+
+  return String(
+    number
+  ).padStart(
+    2,
+    "0"
+  );
+
+}
+
+
+/*************************************************
+ GERAR CÓDIGO
+
+ AAA01
+ AAA02
+ AAA09
+ AAA10
+ AAA100
+
+ Sem data.
 *************************************************/
 
 function generateCode() {
@@ -1190,27 +1222,21 @@ function generateCode() {
   ) {
 
     throw new Error(
-      "Dispositivo não preparado."
+      "Dispositivo não preparado / Device not ready"
     );
 
   }
 
 
-  const date =
-    getCampaignDate();
-
-
-  const counter =
-    encodeCounter(
-      getNextCounter()
-    );
+  const number =
+    getNextPermanentNumber();
 
 
   return (
-    date.display +
-    "-" +
     deviceId +
-    counter
+    formatVolunteerNumber(
+      number
+    )
   );
 
 }
@@ -1297,14 +1323,14 @@ function startGPS() {
     .geolocation
     .getCurrentPosition(
 
-      pos => {
+      position => {
 
         document
           .getElementById(
             "latitude"
           )
           .value =
-          pos.coords.latitude;
+          position.coords.latitude;
 
 
         document
@@ -1312,7 +1338,7 @@ function startGPS() {
             "longitude"
           )
           .value =
-          pos.coords.longitude;
+          position.coords.longitude;
 
 
         document
@@ -1321,14 +1347,16 @@ function startGPS() {
           )
           .value =
           Math.round(
-            pos.coords.accuracy || 0
+            position.coords.accuracy ||
+            0
           );
 
 
         hint.textContent =
           "Precisão aproximada: ±" +
           Math.round(
-            pos.coords.accuracy || 0
+            position.coords.accuracy ||
+            0
           ) +
           " m";
 
@@ -1338,7 +1366,7 @@ function startGPS() {
       () => {
 
         hint.textContent =
-          "⚠️ Localização não disponível. Pode registar na mesma.";
+          "⚠️ Localização não disponível. Pode registar na mesma. / Location unavailable. You can still save.";
 
       },
 
@@ -1381,7 +1409,7 @@ function updateNetworkUI() {
       "status ready";
 
 
-    el.innerHTML =
+    el.textContent =
       "Ligação ativa / Online";
 
   } else {
@@ -1390,7 +1418,7 @@ function updateNetworkUI() {
       "status offline";
 
 
-    el.innerHTML =
+    el.textContent =
       "Sem rede / Offline";
 
   }
@@ -1406,7 +1434,7 @@ window.addEventListener(
 
     await ensureDeviceRegistration();
 
-    flushPending();
+    await flushPending();
 
   }
 );
@@ -1419,7 +1447,7 @@ window.addEventListener(
 
 
 /*************************************************
- SUBMETER
+ SUBMETER REGISTO
 *************************************************/
 
 document
@@ -1470,7 +1498,7 @@ document
             "mensagem"
           )
           .textContent =
-          "⚠️ Este telemóvel ainda não está preparado.";
+          "⚠️ Este telemóvel ainda não está preparado. / This phone is not ready yet.";
 
         return;
 
@@ -1521,6 +1549,10 @@ document
         generateSubmissionId();
 
 
+      /*
+        Esta é a hora REAL em que
+        o voluntário guardou o cagarro.
+      */
       const recordedAt =
         new Date()
           .toISOString();
@@ -1596,6 +1628,9 @@ document
       };
 
 
+      /*
+        PRIMEIRO guardar localmente.
+      */
       const queue =
         getQueue();
 
@@ -1603,7 +1638,10 @@ document
       queue.push({
 
         payload:
-          payload
+          payload,
+
+        savedAt:
+          recordedAt
 
       });
 
@@ -1613,6 +1651,10 @@ document
       );
 
 
+      /*
+        O código aparece imediatamente,
+        mesmo sem internet.
+      */
       showCode(
         codigo,
         false
@@ -1627,7 +1669,7 @@ document
         "✅ Registo guardado / Entry saved";
 
 
-      const name =
+      const savedName =
         localStorage.getItem(
           NAME_KEY
         ) || "";
@@ -1641,7 +1683,7 @@ document
           "nome"
         )
         .value =
-        name;
+        savedName;
 
 
       if (
@@ -1699,13 +1741,13 @@ function showCode(
     .textContent =
     synced
       ? "✅ Sincronizado / Synced"
-      : "📦 Pendente / Pending sync";
+      : "📦 Pendente de sincronização / Pending sync";
 
 }
 
 
 /*************************************************
- SINCRONIZAR
+ SINCRONIZAR UM
 *************************************************/
 
 async function syncSubmission(
@@ -1723,7 +1765,9 @@ async function syncSubmission(
 
 
   if (!item) {
+
     return;
+
   }
 
 
@@ -1746,17 +1790,33 @@ async function syncSubmission(
       );
 
 
-    const data =
-      await response.json();
+    const text =
+      await response.text();
+
+
+    let data =
+      null;
+
+
+    try {
+
+      data =
+        JSON.parse(
+          text
+        );
+
+    } catch (_) {}
 
 
     if (
       response.ok &&
+      data &&
       data.status ===
         "success"
     ) {
 
       setQueue(
+
         getQueue()
           .filter(
             q =>
@@ -1764,6 +1824,7 @@ async function syncSubmission(
               q.payload.submissionId !==
                 submissionId
           )
+
       );
 
 
@@ -1783,16 +1844,46 @@ async function syncSubmission(
 
       }
 
+
+      return;
+
     }
 
 
-  } catch (_) {}
+    /*
+      Mostrar erro importante,
+      mas NÃO apagar o pendente.
+    */
+    if (
+      data &&
+      data.code
+    ) {
+
+      document
+        .getElementById(
+          "mensagem"
+        )
+        .textContent =
+        "⚠️ Erro de sincronização: " +
+        data.code;
+
+    }
+
+
+  } catch (_) {
+
+    /*
+      Sem rede:
+      mantém registo na fila.
+    */
+
+  }
 
 }
 
 
 /*************************************************
- TODOS OS PENDENTES
+ SINCRONIZAR TODOS
 *************************************************/
 
 async function flushPending() {
@@ -1800,7 +1891,9 @@ async function flushPending() {
   if (
     !navigator.onLine
   ) {
+
     return;
+
   }
 
 
@@ -1857,7 +1950,7 @@ function updateQueueUI() {
     info.textContent =
       "📦 " +
       total +
-      " registo(s) por sincronizar";
+      " registo(s) por sincronizar / pending";
 
 
     button
@@ -1869,7 +1962,7 @@ function updateQueueUI() {
   } else {
 
     info.textContent =
-      "✅ Todos os registos sincronizados";
+      "✅ Todos os registos sincronizados / All entries synced";
 
 
     button
@@ -1894,7 +1987,7 @@ document
 
 
 /*************************************************
- COPIAR
+ COPIAR CÓDIGO
 *************************************************/
 
 document
@@ -1927,7 +2020,7 @@ document
 
         event.target
           .textContent =
-          "✅ Copiado";
+          "✅ Copiado / Copied";
 
 
         setTimeout(
@@ -1940,6 +2033,7 @@ document
           },
           1200
         );
+
 
       } catch (_) {}
 
@@ -1968,7 +2062,7 @@ async function init() {
     navigator.onLine
   ) {
 
-    flushPending();
+    await flushPending();
 
   }
 
@@ -1981,4 +2075,5 @@ init();
 
 
 </body>
+
 </html>
