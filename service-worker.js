@@ -1,12 +1,17 @@
 const CACHE_NAME =
-  "cagarros-app-v2";
+  "cagarros-app-v3";
 
 
 const APP_FILES = [
+
   "./",
+
   "./index.html",
+
   "./manifest.webmanifest",
+
   "./spea-logo-white.png"
+
 ];
 
 
@@ -77,21 +82,23 @@ self.addEventListener(
   "fetch",
   event => {
 
-    /*
-      Só fazemos cache dos ficheiros
-      da própria aplicação GitHub Pages.
-
-      APIs externas não são interferidas.
-    */
     const requestUrl =
       new URL(
         event.request.url
       );
 
 
+    /*
+      Não interferir com Apps Script,
+      IPMA ou outras APIs.
+
+      Cache apenas da nossa aplicação.
+    */
+
     if (
       event.request.method !==
-      "GET" ||
+        "GET"
+      ||
       requestUrl.origin !==
         self.location.origin
     ) {
