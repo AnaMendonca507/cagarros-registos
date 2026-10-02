@@ -29,6 +29,7 @@ Registo de Cagarros
   --maxw: 520px;
 }
 
+
 body {
 
   font-family:
@@ -263,13 +264,13 @@ button:disabled {
     monospace;
 
   font-size:
-    2.3rem;
+    2.5rem;
 
   font-weight:
     bold;
 
   letter-spacing:
-    2px;
+    3px;
 
   user-select:
     all;
@@ -613,12 +614,6 @@ const DEVICE_ID_KEY =
 "cagarros_device_id_server_v1";
 
 
-/*
-  NOVA chave.
-
-  É um contador permanente.
-  Já não depende da data.
-*/
 const COUNTER_KEY =
 "cagarros_counter_permanent_v1";
 
@@ -668,7 +663,7 @@ async function registerServiceWorker() {
 
 
 /*************************************************
- UUID INTERNO
+ UUID DO TELEMÓVEL
 *************************************************/
 
 function getDeviceUUID() {
@@ -679,7 +674,9 @@ function getDeviceUUID() {
     );
 
 
-  if (uuid) {
+  if (
+    uuid
+  ) {
 
     return uuid;
 
@@ -729,12 +726,9 @@ function getDeviceUUID() {
 
 
 /*************************************************
- SINCRONIZAR CONTADOR LOCAL COM SERVIDOR
+ AJUSTAR CONTADOR COM O SERVIDOR
 
- O servidor diz qual deveria ser
- o próximo número.
-
- Nunca fazemos o contador andar para trás.
+ Nunca recua.
 *************************************************/
 
 function reconcileCounter(
@@ -791,7 +785,9 @@ function reconcileCounter(
 
     localStorage.setItem(
       COUNTER_KEY,
-      String(serverLast)
+      String(
+        serverLast
+      )
     );
 
   }
@@ -800,7 +796,7 @@ function reconcileCounter(
 
 
 /*************************************************
- PREPARAR / VERIFICAR DISPOSITIVO
+ REGISTAR / VALIDAR DISPOSITIVO
 *************************************************/
 
 async function ensureDeviceRegistration() {
@@ -826,9 +822,7 @@ async function ensureDeviceRegistration() {
 
 
   /*********************************************
-   SEM REDE
-
-   Se já temos ID, podemos trabalhar.
+   SEM INTERNET
   *********************************************/
 
   if (
@@ -885,10 +879,7 @@ async function ensureDeviceRegistration() {
 
 
   /*********************************************
-   COM REDE
-
-   Mesmo que já tenha ID, verificamos o servidor
-   e sincronizamos o contador.
+   COM INTERNET
   *********************************************/
 
   status.className =
@@ -953,23 +944,6 @@ async function ensureDeviceRegistration() {
     );
 
 
-    /*
-      Se já existe ID local mas o service worker
-      tem um problema momentâneo, não bloqueamos
-      um telemóvel que já estava preparado.
-    */
-    if (
-      !swReady &&
-      !localDeviceId
-    ) {
-
-      throw new Error(
-        "Offline preparation failed"
-      );
-
-    }
-
-
     status.className =
       "status ready";
 
@@ -993,9 +967,10 @@ async function ensureDeviceRegistration() {
   } catch (_) {
 
     /*
-      Se este telemóvel já tinha um ID válido,
-      continua operacional.
+      Se já estava preparado,
+      continuamos a permitir registos.
     */
+
     if (
       localDeviceId &&
       localDeviceId.length === 3
@@ -1048,7 +1023,7 @@ async function ensureDeviceRegistration() {
 
 
 /*************************************************
- FILA LOCAL
+ FILA OFFLINE
 *************************************************/
 
 function getQueue() {
@@ -1122,18 +1097,10 @@ function generateSubmissionId() {
 
 
 /*************************************************
- PRÓXIMO NÚMERO DO VOLUNTÁRIO
+ CONTADOR PERMANENTE
 
- Não reinicia com a data.
-
- 1 -> 01
- 2 -> 02
- ...
- 8 -> 08
- 9 -> 09
- 10 -> 10
- ...
- 100 -> 100
+ Não reinicia à meia-noite,
+ às 08h ou no dia seguinte.
 *************************************************/
 
 function getNextPermanentNumber() {
@@ -1147,7 +1114,9 @@ function getNextPermanentNumber() {
 
 
   if (
-    !Number.isFinite(last) ||
+    !Number.isFinite(
+      last
+    ) ||
     last < 0
   ) {
 
@@ -1158,13 +1127,16 @@ function getNextPermanentNumber() {
 
 
   const next =
-    Math.floor(last) + 1;
+    Math.floor(
+      last
+    ) + 1;
 
 
   /*
-    Guardamos ANTES de enviar.
-    Assim nunca reutilizamos este número.
+    Guardamos imediatamente antes
+    de tentar enviar.
   */
+
   localStorage.setItem(
     COUNTER_KEY,
     String(next)
@@ -1177,9 +1149,14 @@ function getNextPermanentNumber() {
 
 
 /*************************************************
- FORMATAR NÚMERO
+ FORMATAR
 
- mínimo 2 algarismos
+ 1 -> 01
+ 8 -> 08
+ 9 -> 09
+ 10 -> 10
+ 99 -> 99
+ 100 -> 100
 *************************************************/
 
 function formatVolunteerNumber(
@@ -1199,13 +1176,9 @@ function formatVolunteerNumber(
 /*************************************************
  GERAR CÓDIGO
 
- AAA01
- AAA02
- AAA09
- AAA10
- AAA100
-
- Sem data.
+ AAA 01
+ AAA 02
+ AAA 03
 *************************************************/
 
 function generateCode() {
@@ -1234,6 +1207,7 @@ function generateCode() {
 
   return (
     deviceId +
+    " " +
     formatVolunteerNumber(
       number
     )
@@ -1254,7 +1228,9 @@ function loadName() {
     );
 
 
-  if (saved) {
+  if (
+    saved
+  ) {
 
     document
       .getElementById(
@@ -1279,7 +1255,9 @@ function saveName() {
       .trim();
 
 
-  if (name) {
+  if (
+    name
+  ) {
 
     localStorage.setItem(
       NAME_KEY,
@@ -1319,8 +1297,7 @@ function startGPS() {
     "A obter localização... / Getting location...";
 
 
-  navigator
-    .geolocation
+  navigator.geolocation
     .getCurrentPosition(
 
       position => {
@@ -1395,7 +1372,7 @@ function startGPS() {
 
 function updateNetworkUI() {
 
-  const el =
+  const element =
     document.getElementById(
       "networkStatus"
     );
@@ -1405,20 +1382,20 @@ function updateNetworkUI() {
     navigator.onLine
   ) {
 
-    el.className =
+    element.className =
       "status ready";
 
 
-    el.textContent =
+    element.textContent =
       "Ligação ativa / Online";
 
   } else {
 
-    el.className =
+    element.className =
       "status offline";
 
 
-    el.textContent =
+    element.textContent =
       "Sem rede / Offline";
 
   }
@@ -1447,7 +1424,7 @@ window.addEventListener(
 
 
 /*************************************************
- SUBMETER REGISTO
+ GUARDAR
 *************************************************/
 
 document
@@ -1540,6 +1517,7 @@ document
         button.disabled =
           false;
 
+
         return;
 
       }
@@ -1550,9 +1528,10 @@ document
 
 
       /*
-        Esta é a hora REAL em que
-        o voluntário guardou o cagarro.
+        Hora REAL em que o cagarro
+        foi introduzido na aplicação.
       */
+
       const recordedAt =
         new Date()
           .toISOString();
@@ -1629,8 +1608,9 @@ document
 
 
       /*
-        PRIMEIRO guardar localmente.
+        Primeiro guardar localmente.
       */
+
       const queue =
         getQueue();
 
@@ -1652,9 +1632,9 @@ document
 
 
       /*
-        O código aparece imediatamente,
-        mesmo sem internet.
+        Mostrar imediatamente.
       */
+
       showCode(
         codigo,
         false
@@ -1747,7 +1727,7 @@ function showCode(
 
 
 /*************************************************
- SINCRONIZAR UM
+ SINCRONIZAR UM REGISTO
 *************************************************/
 
 async function syncSubmission(
@@ -1764,7 +1744,9 @@ async function syncSubmission(
       );
 
 
-  if (!item) {
+  if (
+    !item
+  ) {
 
     return;
 
@@ -1850,10 +1832,6 @@ async function syncSubmission(
     }
 
 
-    /*
-      Mostrar erro importante,
-      mas NÃO apagar o pendente.
-    */
     if (
       data &&
       data.code
@@ -1864,7 +1842,7 @@ async function syncSubmission(
           "mensagem"
         )
         .textContent =
-        "⚠️ Erro de sincronização: " +
+        "⚠️ Erro de sincronização / Sync error: " +
         data.code;
 
     }
@@ -1873,8 +1851,7 @@ async function syncSubmission(
   } catch (_) {
 
     /*
-      Sem rede:
-      mantém registo na fila.
+      Continua guardado localmente.
     */
 
   }
@@ -1883,7 +1860,7 @@ async function syncSubmission(
 
 
 /*************************************************
- SINCRONIZAR TODOS
+ SINCRONIZAR PENDENTES
 *************************************************/
 
 async function flushPending() {
@@ -1922,7 +1899,7 @@ async function flushPending() {
 
 
 /*************************************************
- FILA UI
+ FILA
 *************************************************/
 
 function updateQueueUI() {
@@ -2075,5 +2052,4 @@ init();
 
 
 </body>
-
 </html>
