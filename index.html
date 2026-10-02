@@ -601,18 +601,14 @@ const scriptURL =
 const QUEUE_KEY =
 "cagarros_pendentes_v2";
 
-
 const NAME_KEY =
 "cagarros_nome_voluntario_v1";
-
 
 const UUID_KEY =
 "cagarros_device_uuid_v1";
 
-
 const DEVICE_ID_KEY =
 "cagarros_device_id_server_v1";
-
 
 const COUNTER_KEY =
 "cagarros_counter_permanent_v1";
@@ -663,7 +659,7 @@ async function registerServiceWorker() {
 
 
 /*************************************************
- UUID DO TELEMÓVEL
+ UUID
 *************************************************/
 
 function getDeviceUUID() {
@@ -674,9 +670,7 @@ function getDeviceUUID() {
     );
 
 
-  if (
-    uuid
-  ) {
+  if (uuid) {
 
     return uuid;
 
@@ -726,10 +720,76 @@ function getDeviceUUID() {
 
 
 /*************************************************
- AJUSTAR CONTADOR COM O SERVIDOR
-
- Nunca recua.
+ CONTADOR
 *************************************************/
+
+function getLargestPendingNumber(
+  deviceId
+) {
+
+  let max =
+    0;
+
+
+  const regex =
+    new RegExp(
+      "^" +
+      deviceId +
+      "\\s(\\d+)$"
+    );
+
+
+  for (
+    const item of getQueue()
+  ) {
+
+    if (
+      !item.payload ||
+      !item.payload.codigo
+    ) {
+
+      continue;
+
+    }
+
+
+    const match =
+      String(
+        item.payload.codigo
+      ).match(
+        regex
+      );
+
+
+    if (
+      match
+    ) {
+
+      const number =
+        Number(
+          match[1]
+        );
+
+
+      if (
+        Number.isFinite(number) &&
+        number > max
+      ) {
+
+        max =
+          number;
+
+      }
+
+    }
+
+  }
+
+
+  return max;
+
+}
+
 
 function reconcileCounter(
   nextNumber
@@ -741,18 +801,6 @@ function reconcileCounter(
     );
 
 
-  if (
-    !Number.isFinite(
-      serverNext
-    ) ||
-    serverNext < 1
-  ) {
-
-    return;
-
-  }
-
-
   let localLast =
     Number(
       localStorage.getItem(
@@ -762,10 +810,7 @@ function reconcileCounter(
 
 
   if (
-    !Number.isFinite(
-      localLast
-    ) ||
-    localLast < 0
+    !Number.isFinite(localLast)
   ) {
 
     localLast =
@@ -774,29 +819,49 @@ function reconcileCounter(
   }
 
 
-  const serverLast =
-    serverNext - 1;
-
-
-  if (
-    serverLast >
-    localLast
-  ) {
-
-    localStorage.setItem(
-      COUNTER_KEY,
-      String(
-        serverLast
-      )
+  const deviceId =
+    localStorage.getItem(
+      DEVICE_ID_KEY
     );
 
-  }
+
+  const pendingLast =
+    deviceId
+      ? getLargestPendingNumber(
+          deviceId
+        )
+      : 0;
+
+
+  const serverLast =
+    Number.isFinite(
+      serverNext
+    )
+      ? serverNext - 1
+      : 0;
+
+
+  const safest =
+    Math.max(
+      localLast,
+      pendingLast,
+      serverLast,
+      0
+    );
+
+
+  localStorage.setItem(
+    COUNTER_KEY,
+    String(
+      safest
+    )
+  );
 
 }
 
 
 /*************************************************
- REGISTAR / VALIDAR DISPOSITIVO
+ REGISTAR DISPOSITIVO
 *************************************************/
 
 async function ensureDeviceRegistration() {
@@ -820,10 +885,6 @@ async function ensureDeviceRegistration() {
   const swReady =
     await registerServiceWorker();
 
-
-  /*********************************************
-   SEM INTERNET
-  *********************************************/
 
   if (
     !navigator.onLine
@@ -862,33 +923,12 @@ async function ensureDeviceRegistration() {
 
     status.innerHTML =
       "⚠️ O primeiro acesso necessita de internet.<br>" +
-      "⚠️ First access requires an internet connection.";
-
-
-    document
-      .getElementById(
-        "sendBtn"
-      )
-      .disabled =
-      true;
+      "⚠️ First access requires internet.";
 
 
     return false;
 
   }
-
-
-  /*********************************************
-   COM INTERNET
-  *********************************************/
-
-  status.className =
-    "status waiting";
-
-
-  status.innerHTML =
-    "A preparar este telemóvel...<br>" +
-    "Preparing this phone...";
 
 
   try {
@@ -923,7 +963,7 @@ async function ensureDeviceRegistration() {
     ) {
 
       throw new Error(
-        "Device registration failed"
+        "registration"
       );
 
     }
@@ -944,13 +984,29 @@ async function ensureDeviceRegistration() {
     );
 
 
-    status.className =
-      "status ready";
+    if (
+      swReady
+    ) {
+
+      status.className =
+        "status ready";
 
 
-    status.innerHTML =
-      "✅ Telemóvel preparado para utilização offline<br>" +
-      "✅ Phone ready for offline use";
+      status.innerHTML =
+        "✅ Telemóvel preparado para utilização offline<br>" +
+        "✅ Phone ready for offline use";
+
+    } else {
+
+      status.className =
+        "status waiting";
+
+
+      status.innerHTML =
+        "⚠️ Dispositivo registado, mas a preparação offline não ficou confirmada.<br>" +
+        "⚠️ Device registered, but offline preparation was not confirmed.";
+
+    }
 
 
     document
@@ -965,11 +1021,6 @@ async function ensureDeviceRegistration() {
 
 
   } catch (_) {
-
-    /*
-      Se já estava preparado,
-      continuamos a permitir registos.
-    */
 
     if (
       localDeviceId &&
@@ -1003,16 +1054,8 @@ async function ensureDeviceRegistration() {
 
 
     status.innerHTML =
-      "⚠️ Não foi possível preparar este telemóvel. Verifique a ligação à internet.<br>" +
-      "⚠️ This phone could not be prepared. Check the internet connection.";
-
-
-    document
-      .getElementById(
-        "sendBtn"
-      )
-      .disabled =
-      true;
+      "⚠️ Não foi possível preparar este telemóvel.<br>" +
+      "⚠️ This phone could not be prepared.";
 
 
     return false;
@@ -1023,7 +1066,7 @@ async function ensureDeviceRegistration() {
 
 
 /*************************************************
- FILA OFFLINE
+ FILA
 *************************************************/
 
 function getQueue() {
@@ -1045,7 +1088,9 @@ function getQueue() {
 }
 
 
-function setQueue(queue) {
+function setQueue(
+  queue
+) {
 
   localStorage.setItem(
     QUEUE_KEY,
@@ -1076,31 +1121,19 @@ function generateSubmissionId() {
   }
 
 
-  const values =
-    new Uint32Array(4);
-
-
-  crypto.getRandomValues(
-    values
+  return (
+    Date.now() +
+    "-" +
+    Math.random()
+      .toString(16)
+      .slice(2)
   );
-
-
-  return Array
-    .from(values)
-    .map(
-      n =>
-        n.toString(16)
-    )
-    .join("-");
 
 }
 
 
 /*************************************************
- CONTADOR PERMANENTE
-
- Não reinicia à meia-noite,
- às 08h ou no dia seguinte.
+ GERAR CÓDIGO
 *************************************************/
 
 function getNextPermanentNumber() {
@@ -1114,9 +1147,7 @@ function getNextPermanentNumber() {
 
 
   if (
-    !Number.isFinite(
-      last
-    ) ||
+    !Number.isFinite(last) ||
     last < 0
   ) {
 
@@ -1127,15 +1158,9 @@ function getNextPermanentNumber() {
 
 
   const next =
-    Math.floor(
-      last
-    ) + 1;
+    Math.floor(last) +
+    1;
 
-
-  /*
-    Guardamos imediatamente antes
-    de tentar enviar.
-  */
 
   localStorage.setItem(
     COUNTER_KEY,
@@ -1147,39 +1172,6 @@ function getNextPermanentNumber() {
 
 }
 
-
-/*************************************************
- FORMATAR
-
- 1 -> 01
- 8 -> 08
- 9 -> 09
- 10 -> 10
- 99 -> 99
- 100 -> 100
-*************************************************/
-
-function formatVolunteerNumber(
-  number
-) {
-
-  return String(
-    number
-  ).padStart(
-    2,
-    "0"
-  );
-
-}
-
-
-/*************************************************
- GERAR CÓDIGO
-
- AAA 01
- AAA 02
- AAA 03
-*************************************************/
 
 function generateCode() {
 
@@ -1208,9 +1200,11 @@ function generateCode() {
   return (
     deviceId +
     " " +
-    formatVolunteerNumber(
-      number
-    )
+    String(number)
+      .padStart(
+        2,
+        "0"
+      )
   );
 
 }
@@ -1228,9 +1222,7 @@ function loadName() {
     );
 
 
-  if (
-    saved
-  ) {
+  if (saved) {
 
     document
       .getElementById(
@@ -1255,9 +1247,7 @@ function saveName() {
       .trim();
 
 
-  if (
-    name
-  ) {
+  if (name) {
 
     localStorage.setItem(
       NAME_KEY,
@@ -1349,7 +1339,6 @@ function startGPS() {
 
 
       {
-
         enableHighAccuracy:
           true,
 
@@ -1358,7 +1347,6 @@ function startGPS() {
 
         maximumAge:
           30000
-
       }
 
     );
@@ -1403,28 +1391,11 @@ function updateNetworkUI() {
 }
 
 
-window.addEventListener(
-  "online",
-  async () => {
-
-    updateNetworkUI();
-
-    await ensureDeviceRegistration();
-
-    await flushPending();
-
-  }
-);
-
-
-window.addEventListener(
-  "offline",
-  updateNetworkUI
-);
-
-
 /*************************************************
  GUARDAR
+
+ IMPORTANTE:
+ Não espera pela sincronização.
 *************************************************/
 
 document
@@ -1433,7 +1404,7 @@ document
   )
   .addEventListener(
     "submit",
-    async event => {
+    event => {
 
       event.preventDefault();
 
@@ -1470,26 +1441,9 @@ document
         !deviceUuid
       ) {
 
-        document
-          .getElementById(
-            "mensagem"
-          )
-          .textContent =
-          "⚠️ Este telemóvel ainda não está preparado. / This phone is not ready yet.";
-
         return;
 
       }
-
-
-      const button =
-        document.getElementById(
-          "sendBtn"
-        );
-
-
-      button.disabled =
-        true;
 
 
       saveName();
@@ -1513,11 +1467,6 @@ document
           "⚠️ " +
           err.message;
 
-
-        button.disabled =
-          false;
-
-
         return;
 
       }
@@ -1526,11 +1475,6 @@ document
       const submissionId =
         generateSubmissionId();
 
-
-      /*
-        Hora REAL em que o cagarro
-        foi introduzido na aplicação.
-      */
 
       const recordedAt =
         new Date()
@@ -1608,7 +1552,7 @@ document
 
 
       /*
-        Primeiro guardar localmente.
+        PRIMEIRO guardar localmente.
       */
 
       const queue =
@@ -1621,7 +1565,10 @@ document
           payload,
 
         savedAt:
-          recordedAt
+          recordedAt,
+
+        attempts:
+          0
 
       });
 
@@ -1632,7 +1579,7 @@ document
 
 
       /*
-        Mostrar imediatamente.
+        MOSTRAR IMEDIATAMENTE.
       */
 
       showCode(
@@ -1666,22 +1613,36 @@ document
         savedName;
 
 
+      startGPS();
+
+
+      /*
+        Não usamos await.
+
+        O voluntário pode continuar
+        imediatamente.
+      */
+
       if (
         navigator.onLine
       ) {
 
-        await syncSubmission(
-          submissionId
+        setTimeout(
+          () => {
+
+            syncSubmission(
+              submissionId
+            );
+
+          },
+
+          Math.floor(
+            Math.random() *
+            1500
+          )
         );
 
       }
-
-
-      button.disabled =
-        false;
-
-
-      startGPS();
 
     }
   );
@@ -1721,31 +1682,35 @@ function showCode(
     .textContent =
     synced
       ? "✅ Sincronizado / Synced"
-      : "📦 Pendente de sincronização / Pending sync";
+      : "📦 Guardado. Sincronização automática / Saved. Automatic sync";
 
 }
 
 
 /*************************************************
- SINCRONIZAR UM REGISTO
+ SINCRONIZAR
 *************************************************/
 
 async function syncSubmission(
   submissionId
 ) {
 
+  const queue =
+    getQueue();
+
+
   const item =
-    getQueue()
-      .find(
-        q =>
-          q.payload &&
-          q.payload.submissionId ===
-            submissionId
-      );
+    queue.find(
+      q =>
+        q.payload &&
+        q.payload.submissionId ===
+          submissionId
+    );
 
 
   if (
-    !item
+    !item ||
+    !navigator.onLine
   ) {
 
     return;
@@ -1754,6 +1719,21 @@ async function syncSubmission(
 
 
   try {
+
+    const controller =
+      new AbortController();
+
+
+    const timeout =
+      setTimeout(
+        () => {
+
+          controller.abort();
+
+        },
+        15000
+      );
+
 
     const response =
       await fetch(
@@ -1766,10 +1746,18 @@ async function syncSubmission(
           body:
             JSON.stringify(
               item.payload
-            )
+            ),
+
+          signal:
+            controller.signal
 
         }
       );
+
+
+    clearTimeout(
+      timeout
+    );
 
 
     const text =
@@ -1799,13 +1787,12 @@ async function syncSubmission(
 
       setQueue(
 
-        getQueue()
-          .filter(
-            q =>
-              !q.payload ||
-              q.payload.submissionId !==
-                submissionId
-          )
+        getQueue().filter(
+          q =>
+            !q.payload ||
+            q.payload.submissionId !==
+              submissionId
+        )
 
       );
 
@@ -1832,27 +1819,44 @@ async function syncSubmission(
     }
 
 
+    /*
+      Erros temporários ficam na fila.
+      Não assustamos o voluntário.
+    */
+
     if (
       data &&
-      data.code
+      (
+        data.code ===
+          "LOCK_TIMEOUT"
+        ||
+        data.code ===
+          "UNEXPECTED"
+      )
     ) {
 
-      document
-        .getElementById(
-          "mensagem"
-        )
-        .textContent =
-        "⚠️ Erro de sincronização / Sync error: " +
-        data.code;
+      scheduleRetry(
+        submissionId
+      );
+
+      return;
 
     }
 
 
+    /*
+      Erro definitivo continua guardado
+      para não perdermos dados.
+    */
+
+    updateQueueUI();
+
+
   } catch (_) {
 
-    /*
-      Continua guardado localmente.
-    */
+    scheduleRetry(
+      submissionId
+    );
 
   }
 
@@ -1860,7 +1864,48 @@ async function syncSubmission(
 
 
 /*************************************************
- SINCRONIZAR PENDENTES
+ NOVA TENTATIVA COM JITTER
+
+ Evita dezenas de telemóveis
+ tentarem sincronizar simultaneamente.
+*************************************************/
+
+function scheduleRetry(
+  submissionId
+) {
+
+  const delay =
+    3000 +
+    Math.floor(
+      Math.random() *
+      7000
+    );
+
+
+  setTimeout(
+    () => {
+
+      if (
+        navigator.onLine
+      ) {
+
+        syncSubmission(
+          submissionId
+        );
+
+      }
+
+    },
+    delay
+  );
+
+}
+
+
+/*************************************************
+ SINCRONIZAR FILA
+
+ Um de cada vez em cada telemóvel.
 *************************************************/
 
 async function flushPending() {
@@ -1883,12 +1928,36 @@ async function flushPending() {
   ) {
 
     if (
+      !navigator.onLine
+    ) {
+
+      break;
+
+    }
+
+
+    if (
       item.payload &&
       item.payload.submissionId
     ) {
 
       await syncSubmission(
         item.payload.submissionId
+      );
+
+
+      /*
+        Pequena pausa para não bombardear
+        o servidor se este telemóvel tiver
+        muitos pendentes.
+      */
+
+      await new Promise(
+        resolve =>
+          setTimeout(
+            resolve,
+            350
+          )
       );
 
     }
@@ -1899,7 +1968,7 @@ async function flushPending() {
 
 
 /*************************************************
- FILA
+ FILA UI
 *************************************************/
 
 function updateQueueUI() {
@@ -1927,7 +1996,7 @@ function updateQueueUI() {
     info.textContent =
       "📦 " +
       total +
-      " registo(s) por sincronizar / pending";
+      " registo(s) guardado(s) por sincronizar / pending";
 
 
     button
@@ -1953,6 +2022,10 @@ function updateQueueUI() {
 }
 
 
+/*************************************************
+ BOTÕES
+*************************************************/
+
 document
   .getElementById(
     "flushBtn"
@@ -1962,10 +2035,6 @@ document
     flushPending
   );
 
-
-/*************************************************
- COPIAR CÓDIGO
-*************************************************/
 
 document
   .getElementById(
@@ -1995,27 +2064,59 @@ document
           );
 
 
-        event.target
-          .textContent =
+        event.target.textContent =
           "✅ Copiado / Copied";
 
 
         setTimeout(
           () => {
 
-            event.target
-              .textContent =
+            event.target.textContent =
               "📋 Copiar código / Copy code";
 
           },
           1200
         );
 
-
       } catch (_) {}
 
     }
   );
+
+
+/*************************************************
+ ONLINE / OFFLINE
+*************************************************/
+
+window.addEventListener(
+  "online",
+  async () => {
+
+    updateNetworkUI();
+
+    await ensureDeviceRegistration();
+
+
+    /*
+      Pequeno atraso aleatório.
+    */
+
+    setTimeout(
+      flushPending,
+      Math.floor(
+        Math.random() *
+        3000
+      )
+    );
+
+  }
+);
+
+
+window.addEventListener(
+  "offline",
+  updateNetworkUI
+);
 
 
 /*************************************************
@@ -2032,6 +2133,7 @@ async function init() {
 
   startGPS();
 
+
   await ensureDeviceRegistration();
 
 
@@ -2039,7 +2141,13 @@ async function init() {
     navigator.onLine
   ) {
 
-    await flushPending();
+    setTimeout(
+      flushPending,
+      Math.floor(
+        Math.random() *
+        2500
+      )
+    );
 
   }
 
