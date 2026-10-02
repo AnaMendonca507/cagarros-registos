@@ -1,5 +1,6 @@
 const CACHE_NAME =
-  "cagarros-app-v1";
+  "cagarros-app-v2";
+
 
 const APP_FILES = [
   "./",
@@ -27,6 +28,7 @@ self.addEventListener(
         )
 
     );
+
 
     self.skipWaiting();
 
@@ -64,6 +66,7 @@ self.addEventListener(
 
     );
 
+
     self.clients.claim();
 
   }
@@ -74,9 +77,23 @@ self.addEventListener(
   "fetch",
   event => {
 
+    /*
+      Só fazemos cache dos ficheiros
+      da própria aplicação GitHub Pages.
+
+      APIs externas não são interferidas.
+    */
+    const requestUrl =
+      new URL(
+        event.request.url
+      );
+
+
     if (
       event.request.method !==
-      "GET"
+      "GET" ||
+      requestUrl.origin !==
+        self.location.origin
     ) {
 
       return;
@@ -89,6 +106,7 @@ self.addEventListener(
       fetch(
         event.request
       )
+
       .then(
         response => {
 
@@ -113,18 +131,20 @@ self.addEventListener(
 
         }
       )
+
       .catch(
         () =>
-          caches.match(
-            event.request
-          )
-          .then(
-            cached =>
-              cached ||
-              caches.match(
-                "./index.html"
-              )
-          )
+          caches
+            .match(
+              event.request
+            )
+            .then(
+              cached =>
+                cached ||
+                caches.match(
+                  "./index.html"
+                )
+            )
       )
 
     );
