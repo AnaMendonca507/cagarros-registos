@@ -1,5 +1,5 @@
 const CACHE_NAME =
-  "cagarros-app-v3";
+  "cagarros-app-v4-fast-field";
 
 
 const APP_FILES = [
@@ -88,17 +88,9 @@ self.addEventListener(
       );
 
 
-    /*
-      Não interferir com Apps Script,
-      IPMA ou outras APIs.
-
-      Cache apenas da nossa aplicação.
-    */
-
     if (
       event.request.method !==
-        "GET"
-      ||
+        "GET" ||
       requestUrl.origin !==
         self.location.origin
     ) {
