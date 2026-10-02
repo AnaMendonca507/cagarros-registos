@@ -6,9 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#2f4595">
 
-<title>
-Registo de Cagarros / Cory's Shearwater Rescue
-</title>
+<title>Registo de Cagarros / Cory's Shearwater Rescue</title>
 
 <style>
 
@@ -35,6 +33,7 @@ h2 {
   text-align: center;
   color: #dbe1ff;
   font-size: 14px;
+  margin-bottom: 16px;
 }
 
 label {
@@ -115,14 +114,15 @@ button:disabled {
 
 .code-box {
   font-family: monospace;
-  font-size: 2.1rem;
+  font-size: 2.25rem;
   background: white;
   color: #0b7a2a;
   border: 3px dashed #28a745;
-  padding: 14px;
+  padding: 14px 16px;
   border-radius: 12px;
   text-align: center;
   user-select: all;
+  letter-spacing: 1px;
 }
 
 .code-status {
@@ -153,6 +153,25 @@ button:disabled {
   border: 2px solid white;
 }
 
+.hint {
+  font-size: 12px;
+  color: #ddd;
+  margin-top: 5px;
+}
+
+.privacy-note {
+  font-size: 12px;
+  color: #dbe1ff;
+  margin-top: 6px;
+}
+
+.device-note {
+  font-size: 11px;
+  color: #cbd3ff;
+  margin-top: 15px;
+  text-align: center;
+}
+
 footer {
   margin-top: 28px;
   display: flex;
@@ -163,18 +182,11 @@ footer img {
   max-width: 160px;
 }
 
-.hint {
-  font-size: 12px;
-  color: #ddd;
-  margin-top: 5px;
-}
-
 </style>
 
 </head>
 
 <body>
-
 
 <h2>
 Registo de Cagarros<br>
@@ -185,31 +197,31 @@ Cory's Shearwater Rescue
 Formulário bilingue — Portuguese / English
 </p>
 
-
-<div
-  id="netStatus"
-  class="statusbar">
-</div>
-
+<div id="netStatus" class="statusbar"></div>
 
 <form id="cagarroForm">
 
-<label>
+<label for="nome">
 Nome / Name
 </label>
 
 <input
   id="nome"
+  type="text"
+  placeholder="Digite o seu nome / Enter your name"
   required>
 
+<div class="privacy-note">
+O nome fica guardado neste dispositivo para facilitar os próximos registos.<br>
+Your name is remembered on this device for future entries.
+</div>
 
-<label>
+
+<label for="estado">
 Estado / Status
 </label>
 
-<select
-  id="estado"
-  required>
+<select id="estado" required>
 
 <option value="">
 -- Escolher / Choose --
@@ -234,13 +246,11 @@ Oleado / Oiled
 </select>
 
 
-<label>
+<label for="local">
 Local / Location
 </label>
 
-<select
-  id="local"
-  required>
+<select id="local" required>
 
 <option value="">
 -- Selecionar / Select --
@@ -265,41 +275,28 @@ Marina/Porto / Marina/Port
 </select>
 
 
-<label>
+<label for="observacoes">
 Observações / Observations
 </label>
 
 <textarea
-  id="observacoes">
+  id="observacoes"
+  placeholder="Informações adicionais / Additional information">
 </textarea>
 
 
-<input
-  type="hidden"
-  id="latitude">
-
-<input
-  type="hidden"
-  id="longitude">
-
-<input
-  type="hidden"
-  id="gpsAcc">
+<input type="hidden" id="latitude">
+<input type="hidden" id="longitude">
+<input type="hidden" id="gpsAcc">
 
 
-<div
-  id="gpsHint"
-  class="hint">
+<div id="gpsHint" class="hint">
 A obter localização...
 </div>
 
 
-<button
-  id="sendBtn"
-  type="submit">
-
+<button id="sendBtn" type="submit">
 Guardar registo / Save entry
-
 </button>
 
 </form>
@@ -308,79 +305,87 @@ Guardar registo / Save entry
 <p id="mensagem"></p>
 
 
-<div
-  id="codeArea"
-  class="hidden">
+<div id="codeArea" class="hidden">
 
-<div class="code-wrap">
+  <div class="code-wrap">
+    <div id="bigCode" class="code-box"></div>
+  </div>
 
-<div
-  id="bigCode"
-  class="code-box">
-</div>
+  <div id="syncStatus" class="code-status"></div>
 
-</div>
+  <button id="copyBtn" class="copy">
+    📋 Copiar código / Copy code
+  </button>
 
-
-<div
-  id="syncStatus"
-  class="code-status">
 </div>
 
 
-<button
-  id="copyBtn"
-  class="copy">
+<div id="queueInfo" class="queue"></div>
 
-📋 Copiar código / Copy code
 
+<button id="flushBtn" class="secondary hidden">
+📤 Sincronizar pendentes / Sync pending
 </button>
 
+
+<div class="device-note">
+Evite utilizar o modo privado/incógnito durante a campanha.<br>
+Avoid Private/Incognito mode during the campaign.
 </div>
-
-
-<div
-  id="queueInfo"
-  class="queue">
-</div>
-
-
-<button
-  id="flushBtn"
-  class="secondary hidden">
-
-📤 Sincronizar pendentes /
-Sync pending
-
-</button>
 
 
 <footer>
-
-<img
-  src="./spea-logo-white.png"
-  alt="SPEA">
-
+  <img src="./spea-logo-white.png" alt="SPEA">
 </footer>
 
 
 <script>
 
-/************************************
+/*************************************************
  ENDPOINT
-************************************/
+*************************************************/
 
 const scriptURL =
 "https://script.google.com/macros/s/AKfycbwNjzfFDczI-TWkRUhv_z_lcjVZ0xZF4LyPGYqW1NE8YRtmouq8gxsaltCrTX-CmXMC/exec";
 
 
-/************************************
- FILA LOCAL
-************************************/
+/*************************************************
+ CHAVES LOCAIS
+*************************************************/
 
-const LS_KEY =
+const QUEUE_KEY =
 "cagarros_pendentes_v1";
 
+const NAME_KEY =
+"cagarros_nome_voluntario_v1";
+
+const DEVICE_KEY =
+"cagarros_device_id_v1";
+
+const COUNTER_KEY =
+"cagarros_counter_v1";
+
+
+/*************************************************
+ ALFABETO SEGURO
+
+ Não usamos:
+ I
+ L
+ O
+ S
+ 0
+ 1
+ 5
+*************************************************/
+
+const SAFE_ALPHABET =
+"ABCDEFGHJKMNPQRTUVWXYZ2346789";
+
+
+/*************************************************
+ FILA LOCAL
+*************************************************/
 
 function getQueue() {
 
@@ -388,7 +393,7 @@ function getQueue() {
 
     return JSON.parse(
       localStorage.getItem(
-        LS_KEY
+        QUEUE_KEY
       ) || "[]"
     );
 
@@ -404,7 +409,7 @@ function getQueue() {
 function setQueue(queue) {
 
   localStorage.setItem(
-    LS_KEY,
+    QUEUE_KEY,
     JSON.stringify(queue)
   );
 
@@ -413,14 +418,14 @@ function setQueue(queue) {
 }
 
 
-/************************************
- SUBMISSION ID
-************************************/
+/*************************************************
+ SUBMISSION ID INTERNO
+*************************************************/
 
 function generateSubmissionId() {
 
   if (
-    crypto &&
+    window.crypto &&
     crypto.randomUUID
   ) {
 
@@ -428,26 +433,79 @@ function generateSubmissionId() {
 
   }
 
-  const arr =
+  const array =
     new Uint32Array(4);
 
-  crypto.getRandomValues(arr);
+  crypto.getRandomValues(array);
 
   return Array
-    .from(arr)
+    .from(array)
     .map(
-      n =>
-        n.toString(16)
+      n => n.toString(16)
     )
     .join("-");
 
 }
 
 
-/************************************
- DATA DOS AÇORES
- cutoff = 06:00
-************************************/
+/*************************************************
+ ID DO DISPOSITIVO
+
+ Criado uma vez.
+ Fica guardado no navegador.
+*************************************************/
+
+function getDeviceId() {
+
+  let id =
+    localStorage.getItem(
+      DEVICE_KEY
+    );
+
+  if (
+    id &&
+    id.length === 2
+  ) {
+
+    return id;
+
+  }
+
+
+  const values =
+    new Uint32Array(2);
+
+  crypto.getRandomValues(values);
+
+
+  id =
+    SAFE_ALPHABET[
+      values[0] %
+      SAFE_ALPHABET.length
+    ]
+    +
+    SAFE_ALPHABET[
+      values[1] %
+      SAFE_ALPHABET.length
+    ];
+
+
+  localStorage.setItem(
+    DEVICE_KEY,
+    id
+  );
+
+
+  return id;
+
+}
+
+
+/*************************************************
+ DATA DE CONTAGEM DOS AÇORES
+
+ O "dia" muda às 06:00.
+*************************************************/
 
 function getAzoresCountingDate(
   date = new Date()
@@ -479,39 +537,42 @@ function getAzoresCountingDate(
     .formatToParts(date);
 
 
-  const obj = {};
+  const values = {};
 
   parts.forEach(
-    p =>
-      obj[p.type] =
-        p.value
+    part => {
+      values[part.type] =
+        part.value;
+    }
   );
 
 
-  let y =
-    Number(obj.year);
+  let year =
+    Number(values.year);
 
-  let m =
-    Number(obj.month);
+  let month =
+    Number(values.month);
 
-  let d =
-    Number(obj.day);
+  let day =
+    Number(values.day);
 
-  let h =
-    Number(obj.hour);
+  let hour =
+    Number(values.hour);
 
 
-  let countingDate =
+  const countingDate =
     new Date(
       Date.UTC(
-        y,
-        m - 1,
-        d
+        year,
+        month - 1,
+        day
       )
     );
 
 
-  if (h < 6) {
+  if (
+    hour < 6
+  ) {
 
     countingDate.setUTCDate(
       countingDate.getUTCDate()
@@ -521,79 +582,333 @@ function getAzoresCountingDate(
   }
 
 
+  const dd =
+    String(
+      countingDate.getUTCDate()
+    )
+    .padStart(
+      2,
+      "0"
+    );
+
+
+  const mm =
+    String(
+      countingDate.getUTCMonth()
+      + 1
+    )
+    .padStart(
+      2,
+      "0"
+    );
+
+
+  const yyyy =
+    String(
+      countingDate.getUTCFullYear()
+    );
+
+
   return {
 
-    day:
-      String(
-        countingDate.getUTCDate()
-      ).padStart(2, "0"),
+    display:
+      dd + mm,
 
-    month:
-      String(
-        countingDate.getUTCMonth()
-        + 1
-      ).padStart(2, "0")
+    key:
+      yyyy + mm + dd
 
   };
 
 }
 
 
-/************************************
- GERAR CÓDIGO
+/*************************************************
+ CONTADOR LOCAL
 
- Sem:
- I L O S
- 0 1 5
-************************************/
+ Dois caracteres em base SAFE_ALPHABET.
 
-function generateCode() {
+ Ex:
+ AA
+ AB
+ AC
+ ...
+*************************************************/
 
-  const alphabet =
-    "ABCDEFGHJKMNPQRTUVWXYZ2346789";
+function encodeCounter(number) {
 
-  const bytes =
-    new Uint32Array(6);
+  const base =
+    SAFE_ALPHABET.length;
 
-  crypto.getRandomValues(bytes);
 
-  let random = "";
-
-  for (
-    let i = 0;
-    i < 6;
-    i++
+  if (
+    number < 0
   ) {
 
-    random +=
-      alphabet[
-        bytes[i] %
-        alphabet.length
-      ];
+    number = 0;
 
   }
 
 
-  const date =
-    getAzoresCountingDate();
+  const max =
+    base * base;
+
+
+  if (
+    number >= max
+  ) {
+
+    throw new Error(
+      "Limite diário de registos deste dispositivo atingido."
+    );
+
+  }
+
+
+  const first =
+    Math.floor(
+      number / base
+    );
+
+
+  const second =
+    number % base;
 
 
   return (
-    "CA-" +
-    date.day +
-    date.month +
-    "-" +
-    random
+    SAFE_ALPHABET[first]
+    +
+    SAFE_ALPHABET[second]
   );
 
 }
 
 
-/************************************
+/*************************************************
+ OBTER PRÓXIMO CONTADOR
+*************************************************/
+
+function getNextCounter() {
+
+  const date =
+    getAzoresCountingDate();
+
+
+  let stored = null;
+
+
+  try {
+
+    stored =
+      JSON.parse(
+        localStorage.getItem(
+          COUNTER_KEY
+        ) || "null"
+      );
+
+  } catch (_) {
+
+    stored = null;
+
+  }
+
+
+  if (
+    !stored ||
+    stored.date !==
+      date.key
+  ) {
+
+    stored = {
+      date:
+        date.key,
+
+      value:
+        0
+    };
+
+  }
+
+
+  const current =
+    stored.value;
+
+
+  stored.value =
+    current + 1;
+
+
+  localStorage.setItem(
+    COUNTER_KEY,
+    JSON.stringify(
+      stored
+    )
+  );
+
+
+  return current;
+
+}
+
+
+/*************************************************
+ GERAR CÓDIGO
+
+ Formato:
+ DDMM-XXXX
+
+ XX = dispositivo
+ XX = contador diário
+
+ Ex:
+ 0210-K7A3
+*************************************************/
+
+function generateCode() {
+
+  const date =
+    getAzoresCountingDate();
+
+
+  const deviceId =
+    getDeviceId();
+
+
+  const counter =
+    encodeCounter(
+      getNextCounter()
+    );
+
+
+  return (
+    date.display
+    +
+    "-"
+    +
+    deviceId
+    +
+    counter
+  );
+
+}
+
+
+/*************************************************
+ EVITAR REPETIÇÃO NO PRÓPRIO TELEFONE
+*************************************************/
+
+function codeExistsLocally(
+  codigo
+) {
+
+  const queue =
+    getQueue();
+
+
+  return queue.some(
+    item =>
+      item.payload &&
+      item.payload.codigo ===
+        codigo
+  );
+
+}
+
+
+function generateUniqueLocalCode() {
+
+  let codigo = "";
+
+  let attempts = 0;
+
+
+  do {
+
+    codigo =
+      generateCode();
+
+    attempts++;
+
+
+    if (
+      attempts > 20
+    ) {
+
+      throw new Error(
+        "Não foi possível gerar um código local."
+      );
+
+    }
+
+  } while (
+    codeExistsLocally(
+      codigo
+    )
+  );
+
+
+  return codigo;
+
+}
+
+
+/*************************************************
+ NOME DO VOLUNTÁRIO
+*************************************************/
+
+function loadVolunteerName() {
+
+  const savedName =
+    localStorage.getItem(
+      NAME_KEY
+    );
+
+
+  if (
+    savedName
+  ) {
+
+    document
+      .getElementById(
+        "nome"
+      )
+      .value =
+      savedName;
+
+  }
+
+}
+
+
+function saveVolunteerName() {
+
+  const nome =
+    document
+      .getElementById(
+        "nome"
+      )
+      .value
+      .trim();
+
+
+  if (
+    nome
+  ) {
+
+    localStorage.setItem(
+      NAME_KEY,
+      nome
+    );
+
+  }
+
+}
+
+
+/*************************************************
  GPS
 
- Não bloqueia o formulário.
-************************************/
+ NÃO BLOQUEIA O REGISTO.
+*************************************************/
 
 function startGPS() {
 
@@ -602,29 +917,34 @@ function startGPS() {
       "gpsHint"
     );
 
+
   if (
     !navigator.geolocation
   ) {
 
     hint.textContent =
-      "Localização não disponível.";
+      "Localização não disponível. Pode registar na mesma.";
 
     return;
 
   }
 
 
+  hint.textContent =
+    "A obter localização...";
+
+
   navigator.geolocation
     .getCurrentPosition(
 
-      pos => {
+      position => {
 
         document
           .getElementById(
             "latitude"
           )
           .value =
-          pos.coords.latitude;
+          position.coords.latitude;
 
 
         document
@@ -632,7 +952,7 @@ function startGPS() {
             "longitude"
           )
           .value =
-          pos.coords.longitude;
+          position.coords.longitude;
 
 
         document
@@ -641,15 +961,19 @@ function startGPS() {
           )
           .value =
           Math.round(
-            pos.coords.accuracy
+            position.coords.accuracy ||
+            0
           );
 
 
         hint.textContent =
-          "Precisão aproximada: ±" +
+          "Precisão aproximada: ±"
+          +
           Math.round(
-            pos.coords.accuracy
-          ) +
+            position.coords.accuracy ||
+            0
+          )
+          +
           " m";
 
       },
@@ -681,9 +1005,9 @@ function startGPS() {
 }
 
 
-/************************************
- ESTADO INTERNET
-************************************/
+/*************************************************
+ INTERNET
+*************************************************/
 
 const netStatus =
   document.getElementById(
@@ -693,7 +1017,9 @@ const netStatus =
 
 function updateNetworkUI() {
 
-  if (navigator.onLine) {
+  if (
+    navigator.onLine
+  ) {
 
     netStatus.className =
       "statusbar online";
@@ -732,9 +1058,9 @@ window.addEventListener(
 );
 
 
-/************************************
+/*************************************************
  MOSTRAR CÓDIGO
-************************************/
+*************************************************/
 
 function showCode(
   codigo,
@@ -746,10 +1072,12 @@ function showCode(
       "codeArea"
     );
 
+
   const big =
     document.getElementById(
       "bigCode"
     );
+
 
   const status =
     document.getElementById(
@@ -766,7 +1094,9 @@ function showCode(
   );
 
 
-  if (synced) {
+  if (
+    synced
+  ) {
 
     status.className =
       "code-status synced";
@@ -787,9 +1117,9 @@ function showCode(
 }
 
 
-/************************************
- GUARDAR REGISTO
-************************************/
+/*************************************************
+ SUBMISSÃO DO FORMULÁRIO
+*************************************************/
 
 document
   .getElementById(
@@ -827,8 +1157,32 @@ document
         true;
 
 
-      const codigo =
-        generateCode();
+      saveVolunteerName();
+
+
+      let codigo;
+
+
+      try {
+
+        codigo =
+          generateUniqueLocalCode();
+
+      } catch (error) {
+
+        document
+          .getElementById(
+            "mensagem"
+          )
+          .textContent =
+          "⚠️ Não foi possível gerar o código.";
+
+        button.disabled =
+          false;
+
+        return;
+
+      }
 
 
       const submissionId =
@@ -842,7 +1196,8 @@ document
             .getElementById(
               "nome"
             )
-            .value,
+            .value
+            .trim(),
 
         estado:
           document
@@ -895,9 +1250,9 @@ document
       };
 
 
-      /*****
+      /*********************************************
        PRIMEIRO GUARDA LOCALMENTE
-      *****/
+      *********************************************/
 
       const queue =
         getQueue();
@@ -915,12 +1270,14 @@ document
       });
 
 
-      setQueue(queue);
+      setQueue(
+        queue
+      );
 
 
-      /*****
-       MOSTRAR CÓDIGO IMEDIATAMENTE
-      *****/
+      /*********************************************
+       MOSTRAR O CÓDIGO IMEDIATAMENTE
+      *********************************************/
 
       showCode(
         codigo,
@@ -936,16 +1293,32 @@ document
         "✅ Registo guardado / Entry saved";
 
 
-      /*****
+      /*********************************************
        LIMPAR FORMULÁRIO
-      *****/
+
+       MAS MANTER O NOME.
+      *********************************************/
+
+      const savedName =
+        localStorage.getItem(
+          NAME_KEY
+        ) || "";
+
 
       form.reset();
 
 
-      /*****
-       TENTAR SINCRONIZAR
-      *****/
+      document
+        .getElementById(
+          "nome"
+        )
+        .value =
+        savedName;
+
+
+      /*********************************************
+       TENTAR ENVIAR
+      *********************************************/
 
       if (
         navigator.onLine
@@ -971,9 +1344,9 @@ document
   );
 
 
-/************************************
+/*************************************************
  SINCRONIZAR UM REGISTO
-************************************/
+*************************************************/
 
 async function syncSubmission(
   submissionId
@@ -986,14 +1359,18 @@ async function syncSubmission(
   const item =
     queue.find(
       q =>
-        q.payload
-          .submissionId ===
-        submissionId
+        q.payload &&
+        q.payload.submissionId ===
+          submissionId
     );
 
 
-  if (!item) {
+  if (
+    !item
+  ) {
+
     return;
+
   }
 
 
@@ -1027,7 +1404,9 @@ async function syncSubmission(
     try {
 
       data =
-        JSON.parse(text);
+        JSON.parse(
+          text
+        );
 
     } catch (_) {}
 
@@ -1043,9 +1422,9 @@ async function syncSubmission(
         getQueue()
           .filter(
             q =>
-              q.payload
-                .submissionId !==
-              submissionId
+              !q.payload ||
+              q.payload.submissionId !==
+                submissionId
           );
 
 
@@ -1074,23 +1453,28 @@ async function syncSubmission(
 
   } catch (_) {
 
-    // permanece pendente
+    /*
+      Não apagamos nada.
+      Continua pendente.
+    */
 
   }
 
 }
 
 
-/************************************
- SINCRONIZAR PENDENTES
-************************************/
+/*************************************************
+ SINCRONIZAR TODOS OS PENDENTES
+*************************************************/
 
 async function flushPending() {
 
   if (
     !navigator.onLine
   ) {
+
     return;
+
   }
 
 
@@ -1102,15 +1486,25 @@ async function flushPending() {
     const item of queue
   ) {
 
-    await syncSubmission(
-      item.payload
-        .submissionId
-    );
+    if (
+      item.payload &&
+      item.payload.submissionId
+    ) {
+
+      await syncSubmission(
+        item.payload.submissionId
+      );
+
+    }
 
   }
 
 }
 
+
+/*************************************************
+ BOTÃO DE SINCRONIZAÇÃO
+*************************************************/
 
 document
   .getElementById(
@@ -1122,9 +1516,9 @@ document
   );
 
 
-/************************************
- CONTADOR DE PENDENTES
-************************************/
+/*************************************************
+ INTERFACE DOS PENDENTES
+*************************************************/
 
 function updateQueueUI() {
 
@@ -1144,11 +1538,15 @@ function updateQueueUI() {
     );
 
 
-  if (total > 0) {
+  if (
+    total > 0
+  ) {
 
     info.textContent =
-      "📦 " +
-      total +
+      "📦 "
+      +
+      total
+      +
       " registo(s) por sincronizar";
 
 
@@ -1171,9 +1569,9 @@ function updateQueueUI() {
 }
 
 
-/************************************
+/*************************************************
  COPIAR CÓDIGO
-************************************/
+*************************************************/
 
 document
   .getElementById(
@@ -1198,7 +1596,9 @@ document
 
         await navigator
           .clipboard
-          .writeText(code);
+          .writeText(
+            code
+          );
 
 
         event.target
@@ -1217,15 +1617,27 @@ document
           1500
         );
 
-      } catch (_) {}
+      } catch (_) {
+
+        /*
+          Em alguns iPhones antigos
+          a clipboard API pode não estar disponível.
+          O código continua visível e selecionável.
+        */
+
+      }
 
     }
   );
 
 
-/************************************
+/*************************************************
  ARRANQUE
-************************************/
+*************************************************/
+
+getDeviceId();
+
+loadVolunteerName();
 
 updateNetworkUI();
 
