@@ -1391,6 +1391,21 @@ function updateNetworkUI() {
 }
 
 
+const localField = document.getElementById("local");
+
+localField.addEventListener("invalid", () => {
+  localField.setCustomValidity(
+    localField.value
+      ? ""
+      : "Por favor, selecione uma opção em Local / Location. / Please select an option in Local / Location."
+  );
+});
+
+localField.addEventListener("change", () => {
+  localField.setCustomValidity("");
+});
+
+
 /*************************************************
  GUARDAR
 
