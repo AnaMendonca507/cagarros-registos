@@ -1060,13 +1060,8 @@ async function ensureDeviceRegistration() {
 
     } else {
 
-      status.className =
-        "status waiting";
-
-
-      status.innerHTML =
-        "⚠️ Dispositivo registado, mas a preparação offline não ficou confirmada.<br>" +
-        "⚠️ Device registered, but offline preparation was not confirmed.";
+      status.className = "status hidden";
+      status.textContent = "";
 
     }
 
