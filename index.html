@@ -662,7 +662,6 @@ function updateRescueCounter() {
 }
 
 function countConfirmedRescue(payload) {
-  if (!["Vivo / Alive", "Ferido / Injured", "Oleado / Oiled"].includes(payload.estado)) return;
   const name = rescueVolunteerKey(payload.nome);
   const id = payload.submissionId;
   if (!name || !id) return;
