@@ -316,6 +316,24 @@ button:disabled {
 }
 
 
+.rescue-counter {
+  margin: 14px 0;
+  padding: 16px;
+  border: 1px solid #c7efd3;
+  border-radius: 12px;
+  background: #e6f4ea;
+  color: #185d2b;
+  text-align: center;
+}
+
+.rescue-counter strong {
+  display: block;
+  font-size: 21px;
+  line-height: 1.4;
+  white-space: pre-line;
+  text-align: center;
+}
+
 footer {
 
   margin-top:
@@ -368,6 +386,10 @@ Preparing this phone...
   class="status">
 </div>
 
+
+<div class="rescue-counter" role="status" aria-live="polite" aria-atomic="true">
+  <strong id="rescueCount"></strong>
+</div>
 
 <form id="cagarroForm">
 
@@ -612,6 +634,46 @@ const DEVICE_ID_KEY =
 
 const COUNTER_KEY =
 "cagarros_counter_permanent_v1";
+
+// Contador de resgates independente da numeração dos códigos.
+const RESCUE_KEY = "cagarros_vfc_resgates_v1";
+let rescueRecords = new Map();
+try {
+  const saved = JSON.parse(localStorage.getItem(RESCUE_KEY) || "[]");
+  if (Array.isArray(saved)) {
+    rescueRecords = new Map(saved.filter(row =>
+      Array.isArray(row) && typeof row[0] === "string" && Array.isArray(row[1]))
+      .map(([name, ids]) => [name, [...new Set(ids.filter(id => typeof id === "string"))]]));
+  }
+} catch (_) {}
+
+function rescueVolunteerKey(name) {
+  return name.trim().normalize("NFC").toLocaleLowerCase("pt-PT");
+}
+
+function updateRescueCounter() {
+  const name = rescueVolunteerKey(document.getElementById("nome").value);
+  const count = (rescueRecords.get(name) || []).length;
+  document.getElementById("rescueCount").textContent = !name
+    ? "🐦 Indique o seu nome para ver os seus resgates.\nEnter your name to see your rescues."
+    : count === 0
+      ? "🐦 O seu próximo resgate faz a diferença!\nYour next rescue makes a difference!"
+      : `🐦 Já registou o resgate de ${count} ${count === 1 ? "cagarro" : "cagarros"}. Obrigado pela sua ajuda!\n${count} ${count === 1 ? "rescue" : "rescues"} recorded. Thank you!`;
+}
+
+function countConfirmedRescue(payload) {
+  if (!["Vivo / Alive", "Ferido / Injured", "Oleado / Oiled"].includes(payload.estado)) return;
+  const name = rescueVolunteerKey(payload.nome);
+  const id = payload.submissionId;
+  if (!name || !id) return;
+  const ids = rescueRecords.get(name) || [];
+  if (ids.includes(id)) return;
+  rescueRecords.set(name, [...ids, id]);
+  try { localStorage.setItem(RESCUE_KEY, JSON.stringify([...rescueRecords])); } catch (_) {}
+  updateRescueCounter();
+}
+
+document.getElementById("nome").addEventListener("input", updateRescueCounter);
 
 
 /*************************************************
@@ -1800,6 +1862,8 @@ async function syncSubmission(
         "success"
     ) {
 
+      countConfirmedRescue(item.payload);
+
       setQueue(
 
         getQueue().filter(
@@ -2141,6 +2205,8 @@ window.addEventListener(
 async function init() {
 
   loadName();
+
+  updateRescueCounter();
 
   updateNetworkUI();
 
